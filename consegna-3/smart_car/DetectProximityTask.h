@@ -3,6 +3,7 @@
 
 #include "Task.h"
 #include "ProximitySensorImpl.h"
+#include "Display.h"
 #include "SharedContext.h"
 
 class DetectProximityTask: public Task {
@@ -11,11 +12,12 @@ class DetectProximityTask: public Task {
 
     ProximitySensor* proximity;
     SharedContext* shared;
+    Display* display;
     enum { OUT, IN, CLOSE } state;
 
   public:
 
-    DetectProximityTask(SharedContext* shared, ProximitySensor* proximity);
+    DetectProximityTask(SharedContext* shared, ProximitySensor* proximity, Display* display);
     void init(int period);
     void tick();
 };

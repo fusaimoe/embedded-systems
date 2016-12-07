@@ -1,7 +1,7 @@
 #include "AttackTask.h"
 #include "Arduino.h"
 
-AttackTask::AttackTask(SharedContext* shared, Slider* slider, Servo* servo) {
+AttackTask::AttackTask(SharedContext* shared, AppSlider* slider, Servo* servo) {
   this->shared = shared;
   this->slider = slider;
   this->servo = servo;

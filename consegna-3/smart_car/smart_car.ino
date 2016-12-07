@@ -26,42 +26,47 @@ Scheduler sched;
 void setup(){
   Serial.begin(9600);
 
-  sched.init(62);
+  sched.init(50);
 
   SharedContext* shared = new SharedContext();
 
-  Led* l1 = new Led(LED1);
-  Led* l2 = new Led(LED2);
-  PriximitySensor* proximitySensor = new ProximitySensorImpl(UECHO, UTRIG);
-  Button* button = new ButtonImpl(SWITCH);
+  MsgService* message = new MsgService();
+  msgService->init();
 
-  Task* t0 = new DetectCarTask();
-  t0->init(124);
+  Led* led1 = new Led(LED1);
+  Led* led2 = new Led(LED2);
+  PriximitySensor* proximity = new ProximitySensorImpl(UECHO, UTRIG);
+  Button* button = new ButtonImpl(SWITCH);
+  AppButton* buttonPark = new AppButtonImpl(message, "park");
+  AppButton* buttonMove = new AppButtonImpl(message, "move");
+  AppButton* buttonOn = new AppButtonImpl(message, "on");
+  AppSlider* slider = new AppButtonImpl(message);
+  Display* display = new Display(message);
+
+
+  Task* t0 = new DetectCarTask(shared, buttonPark, buttonMove, buttonOn);
+  t0->init(50);
   sched.addTask(t0);
 
-  Task* t1 = new DetectSliderTask();
-  t1->init(248);
+  Task* t1 = new DetectProximityTask(shared, proximity, display);
+  t1->init(50);
   sched.addTask(t1);
 
-  Task* t2 = new DetectProximityTask();
-  t2->init(124);
+  Task* t2 = new DetectContactTask(shared, button, display);
+  t2->init(50);
   sched.addTask(t2);
 
-  Task* t3 = new DetectContactTask(shared, button);
-  t3->init(62);
+  Task* t3 = new IlluminateLampTask(shared, led1);
+  t3->init(100);
   sched.addTask(t3);
 
-  Task* t4 = new IlluminateLampTask();
-  t4->init(124);
+  Task* t4 = new IlluminateWarningTask(shared, led2);
+  t4->init(100);
   sched.addTask(t4);
 
-  Task* t5 = new IlluminateWarningTask(L1);
-  t5->init(124);
+  Task* t5 = new AttackTask(shared, servo, slider);
+  t5->init(50);
   sched.addTask(t5);
-
-  Task* t6 = new AttackTask(L2);
-  t6->init(124);
-  sched.addTask(t6);
 }
 
 void loop(){

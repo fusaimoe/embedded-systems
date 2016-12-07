@@ -5,9 +5,10 @@
 #define DMAX 0.30
 #define DMIN 0.15
 
-DetectProximityTask::DetectProximityTask(SharedContext* shared, ProximitySensor* proximity) {
+DetectProximityTask::DetectProximityTask(SharedContext* shared, ProximitySensor* proximity, Display* display) {
   this->shared = shared;
   this->proximity = proximity;
+  this->display = display;
 }
 
 void DetectProximityTask::init(int period) {
@@ -19,6 +20,7 @@ void DetectProximityTask::tick() {
   switch (state) {
     case OUT:
       if ( proximity->getDistance() < DMAX && shared->isMoving()) {
+        display->showMsg("proximity");
         state = IN;
       }
       break;
