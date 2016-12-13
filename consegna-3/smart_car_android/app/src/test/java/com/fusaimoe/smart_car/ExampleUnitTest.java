@@ -1,4 +1,4 @@
-package com.example.giulia.smartcar_consegna3;
+package com.fusaimoe.smart_car;
 
 import org.junit.Test;
 

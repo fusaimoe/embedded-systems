@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">SmartCar</string>
+    <string name="app_name">Smart Car</string>
+
+    <string name="tempLabelPrefix">T (°C):</string>
+
+    <string name="btUnavailableAlertTitle">Warning</string>
+    <string name="btUnavailableAlertMessage">Bluetooth unavailable on this device</string>
+    <string name="btUnavailableAlertBtnText">Close APP</string>
+
+
+    <string name="virtualLedSectionLabel">Virtual LED</string>
+    <string name="arduinoLedSectionLabel">Arduino LED Management</string>
+    <string name="sensorSectionLabel">Sensor Management</string>
+
+    <string name="turnOnButtonText">Turn On</string>
+    <string name="turnOffButtonText">Turn Off</string>
+    <string name="readTempButtonText">Read Temp</string>
+
+
 </resources>
