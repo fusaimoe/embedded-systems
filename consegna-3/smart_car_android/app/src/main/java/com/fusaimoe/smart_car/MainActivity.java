@@ -2,6 +2,7 @@ package com.fusaimoe.smart_car;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -13,14 +14,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
@@ -31,27 +32,30 @@ import com.fusaimoe.smart_car.bt.BluetoothConnectionManager;
 import com.fusaimoe.smart_car.bt.BluetoothConnectionTask;
 import com.fusaimoe.smart_car.bt.BluetoothUtils;
 import com.fusaimoe.smart_car.bt.MsgTooBigException;
+import com.fusaimoe.smart_car.email.GMailSender;
 
-import com.google.android.gms.common.ConnectionResult;
+/*import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.ActivityRecognition;
-import com.google.android.gms.location.DetectedActivity;
+import com.google.android.gms.location.DetectedActivity;*/
 
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, ResultCallback<Status> {
+public class MainActivity extends AppCompatActivity /*implements ConnectionCallbacks, OnConnectionFailedListener, ResultCallback<Status> */{
 
     /**
      * Provides the entry point to Google Play services.
      */
-    protected GoogleApiClient mGoogleApiClient;
+    //protected GoogleApiClient mGoogleApiClient;
 
     private BluetoothAdapter btAdapter;
     private BluetoothDevice targetDevice;
@@ -80,6 +84,15 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
 
         initUI();
+
+        /**Codice per l'invio dell'email, non ha ancora un posto dove stare**/
+        /*Log.i("SendMailActivity", "Send Button Clicked.");
+
+        String[] spam = new String[] { "info@cgiulia.com", "giulia.cecchetti96@gmail.com" };
+        List<String> toEmailList = Arrays.asList(spam);
+        new SendMailTask(MainActivity.this).execute("carcontactemergency@gmail.com",
+                "ContactService1", toEmailList, "Contatto", "Attenzione, la tua macchina ha appena subito un contatto. Verifica dove è avvenuto.");
+        */
 
         uiHandler = new MainActivityHandler(this);
     }
@@ -110,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+        //mGoogleApiClient.connect();
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -133,9 +146,10 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     @Override
     protected void onStop() {
         super.onStop();
-        mGoogleApiClient.disconnect();
-
-        BluetoothConnectionManager.getInstance().cancel();
+        //mGoogleApiClient.disconnect();
+        if(BluetoothConnectionManager.getInstance()!=null){
+            BluetoothConnectionManager.getInstance().cancel();
+        }
     }
 
     @Override
@@ -146,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             sm.registerListener(accListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
-
+/*
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -156,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     public void onConnectionSuspended(int i) {
 
     }
-    
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -165,8 +179,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     @Override
     public void onResult(@NonNull Status status) {
 
-    }
-
+    }*/
 
     @Override
     public void onActivityResult (int reqID , int res , Intent data ){
@@ -189,13 +202,13 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
      * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the
      * ActivityRecognition API.
      */
-    protected synchronized void buildGoogleApiClient() {
+    /*protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(ActivityRecognition.API)
                 .build();
-    }
+    }*/
 
     private void initUI() {
 
@@ -226,10 +239,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 }
             }
         });
-
-
-
-
 
        /* virtualLed = (TextView) findViewById(R.id.virtualLed);
         turnOffVirtualLed();
@@ -278,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         try {
             if(park){
                 BluetoothConnectionManager.getInstance().sendMsg("park");
+
             }else{
                 BluetoothConnectionManager.getInstance().sendMsg("notPark");
             }
@@ -335,13 +345,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         task.execute();
     }
 
-
     public static MainActivityHandler getHandler(){
         return uiHandler;
     }
-
-
-
 
     /**
      * The Handler Associated to the MainActivity Class
@@ -401,4 +407,54 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
     }
 
+    public class SendMailTask extends AsyncTask {
+
+        private ProgressDialog statusDialog;
+        private Activity sendMailActivity;
+
+        public SendMailTask(Activity activity) {
+            sendMailActivity = activity;
+
+        }
+
+        protected void onPreExecute() {
+            statusDialog = new ProgressDialog(sendMailActivity);
+            statusDialog.setMessage("Getting ready...");
+            statusDialog.setIndeterminate(false);
+            statusDialog.setCancelable(false);
+            statusDialog.show();
+        }
+
+        @Override
+        protected Object doInBackground(Object... args) {
+            try {
+                Log.i("SendMailTask", "About to instantiate GMail...");
+                publishProgress("Processing input....");
+                GMailSender androidEmail = new GMailSender(args[0].toString(),
+                        args[1].toString(), (List) args[2], args[3].toString(),
+                        args[4].toString());
+                publishProgress("Preparing mail message....");
+                androidEmail.createEmailMessage();
+                publishProgress("Sending email....");
+                androidEmail.sendEmail();
+                publishProgress("Email Sent.");
+                Log.i("SendMailTask", "Mail Sent.");
+            } catch (Exception e) {
+                publishProgress(e.getMessage());
+                Log.e("SendMailTask", e.getMessage(), e);
+            }
+            return null;
+        }
+
+        @Override
+        public void onProgressUpdate(Object... values) {
+            statusDialog.setMessage(values[0].toString());
+
+        }
+
+        @Override
+        public void onPostExecute(Object result) {
+            statusDialog.dismiss();
+        }
+    }
 }
