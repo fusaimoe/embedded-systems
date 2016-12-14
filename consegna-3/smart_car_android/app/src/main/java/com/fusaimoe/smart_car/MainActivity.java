@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem settingsItem = menu.findItem(R.id.settings);
-        MenuItem mapItem = menu.findItem(R.id.collision);
+        MenuItem mapItem = menu.findItem(R.id.maps);
 
         if (mapItem!=null && settingsItem!=null) {
             tintMenuIcon(MainActivity.this, settingsItem, R.color.white);
@@ -122,6 +122,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.settings:
                 Intent intent = new Intent(this, SettingsActivity.class);
                 this.startActivity(intent);
+                break;
+            case R.id.maps:
+                Intent intent2 = new Intent(this, MapsActivity.class);
+                this.startActivity(intent2);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -295,15 +299,15 @@ public class MainActivity extends AppCompatActivity {
                 BluetoothConnectionManager.getInstance().sendMsg("notMoving");
                 movingLabel.setText("The car is not moving");
 
-                Context context = getApplicationContext();
-                CharSequence text = "The car stopped!";
 
-                Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-                toast.show();
             }
         } catch (MsgTooBigException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setContactWhileOff() {
+
     }
 
     private void requestTempValue() {
@@ -364,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (message){
                     case C.BUTTON_PRESSED_MESSAGE:
-                        //context.get().turnOnVirtualLed();
+                        //context.get().setContactWhileOff();
                         break;
 
                     case C.BUTTON_RELEASED_MESSAGE:
@@ -383,6 +387,8 @@ public class MainActivity extends AppCompatActivity {
                 //TODO
             }
         }
+
+
     }
 
     public  class  AccelerometerListener  implements SensorEventListener {
