@@ -26,7 +26,8 @@
         android:textAlignment="center"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/onButton"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/btFoundFlagLabel"
@@ -39,7 +40,7 @@
         android:layout_marginBottom="8dp" />
 
     <TextView
-        android:text="The car is currently not moving"
+        android:text="The car is not moving"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/parkButton"
@@ -47,7 +48,8 @@
         android:layout_marginBottom="16dp"
         android:id="@+id/movingLabel"
         android:layout_alignParentEnd="true"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:visibility="invisible" />
 
     <ToggleButton
         android:text="PARK"

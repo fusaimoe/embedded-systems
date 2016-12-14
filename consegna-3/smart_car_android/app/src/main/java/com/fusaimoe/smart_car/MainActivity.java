@@ -1,5 +1,6 @@
 package com.fusaimoe.smart_car;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -9,23 +10,31 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.ColorRes;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.fusaimoe.smart_car.bt.BluetoothConnectionManager;
@@ -35,15 +44,6 @@ import com.fusaimoe.smart_car.bt.MsgTooBigException;
 import com.fusaimoe.smart_car.email.EmailManagement;
 import com.fusaimoe.smart_car.email.GMailSender;
 
-/*import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.ActivityRecognition;
-import com.google.android.gms.location.DetectedActivity;*/
-
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
@@ -51,12 +51,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity /*implements ConnectionCallbacks, OnConnectionFailedListener, ResultCallback<Status> */{
-
-    /**
-     * Provides the entry point to Google Play services.
-     */
-    //protected GoogleApiClient mGoogleApiClient;
+public class MainActivity extends AppCompatActivity {
 
     private BluetoothAdapter btAdapter;
     private BluetoothDevice targetDevice;
@@ -64,10 +59,10 @@ public class MainActivity extends AppCompatActivity /*implements ConnectionCallb
     private SensorManager sm;
     private Sensor accelerometer;
     private AccelerometerListener accListener;
-
+    private boolean sensorFlag;
 
     private ToggleButton switchOn, switchPark;
-    private TextView movingLabel;
+    private TextView movingLabel, distanceLabel;
 
     private static MainActivityHandler uiHandler;
 
@@ -75,12 +70,22 @@ public class MainActivity extends AppCompatActivity /*implements ConnectionCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Permission Checks
+        final  int  ACCESS_FINE_LOCATION_REQUEST = 1234;
+        int  permission = ContextCompat.checkSelfPermission(this ,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permission  !=  PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            }, ACCESS_FINE_LOCATION_REQUEST);
+        }
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
 
         sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        if (accelerometer != null){
+        if (accelerometer != null) {
             accListener = new AccelerometerListener();
         }
 
@@ -136,7 +141,6 @@ public class MainActivity extends AppCompatActivity /*implements ConnectionCallb
     @Override
     protected void onStart() {
         super.onStart();
-        //mGoogleApiClient.connect();
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -173,26 +177,6 @@ public class MainActivity extends AppCompatActivity /*implements ConnectionCallb
             sm.registerListener(accListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
-/*
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onResult(@NonNull Status status) {
-
-    }*/
 
     @Override
     public void onActivityResult (int reqID , int res , Intent data ){
@@ -211,31 +195,24 @@ public class MainActivity extends AppCompatActivity /*implements ConnectionCallb
         }
     }
 
-    /**
-     * Builds a GoogleApiClient. Uses the {@code #addApi} method to request the
-     * ActivityRecognition API.
-     */
-    /*protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(ActivityRecognition.API)
-                .build();
-    }*/
-
     private void initUI() {
 
         switchOn = (ToggleButton) findViewById(R.id.onButton);
         switchPark = (ToggleButton) findViewById(R.id.parkButton);
         movingLabel = (TextView) findViewById(R.id.movingLabel);
+        distanceLabel = (TextView) findViewById(R.id.movingLabel);
 
         switchOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     switchPark.setEnabled(false);
+                    movingLabel.setVisibility(View.VISIBLE);
+                    distanceLabel.setVisibility(View.VISIBLE);
                     setOn(true);
                 } else {
                     switchPark.setEnabled(true);
+                    movingLabel.setVisibility(View.INVISIBLE);
+                    distanceLabel.setVisibility(View.INVISIBLE);
                     setOn(false);
                 }
             }
@@ -311,12 +288,18 @@ public class MainActivity extends AppCompatActivity /*implements ConnectionCallb
 
     private void setMoving(boolean moving) {
         try {
-            if(moving){
+            if (moving) {
                 BluetoothConnectionManager.getInstance().sendMsg("moving");
                 movingLabel.setText("The car is moving");
-            }else{
+            } else {
                 BluetoothConnectionManager.getInstance().sendMsg("notMoving");
                 movingLabel.setText("The car is not moving");
+
+                Context context = getApplicationContext();
+                CharSequence text = "The car stopped!";
+
+                Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+                toast.show();
             }
         } catch (MsgTooBigException e) {
             e.printStackTrace();
@@ -406,13 +389,28 @@ public class MainActivity extends AppCompatActivity /*implements ConnectionCallb
         private  static  final  String  LOG_TAG = "app -tag";
         @Override
         public  void  onSensorChanged(SensorEvent event) {
-            boolean moving = false;
-            for(float f : event.values){
-                if(f>0.02){
-                    moving=true;
+            boolean otherFlag = false;
+            if(!sensorFlag){
+
+                for(float f : event.values){
+                    if(f>2){
+                        otherFlag=true;
+                        setMoving(true);
+                        sensorFlag=true;
+                    }
+                }
+                if(otherFlag) {
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            sensorFlag = false;
+
+                            setMoving(false);
+                        }
+                    }, 10000);
                 }
             }
-            setMoving(moving);
         }
         @Override
         public  void  onAccuracyChanged(Sensor  sensor , int  accuracy) {
@@ -437,6 +435,7 @@ public class MainActivity extends AppCompatActivity /*implements ConnectionCallb
             statusDialog.setCancelable(false);
             statusDialog.show();
         }
+
 
         @Override
         protected Object doInBackground(Object... args) {
