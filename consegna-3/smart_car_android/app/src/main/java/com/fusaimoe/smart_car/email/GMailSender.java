@@ -24,7 +24,7 @@ public class GMailSender {
 
     String fromEmail;
     String fromPassword;
-    List<String> toEmailList;
+    String receiver;
     String emailSubject;
     String emailBody;
 
@@ -37,10 +37,10 @@ public class GMailSender {
     }
 
     public GMailSender(String fromEmail, String fromPassword,
-                 List<String> toEmailList, String emailSubject, String emailBody) {
+                 String receiver, String emailSubject, String emailBody) {
         this.fromEmail = fromEmail;
         this.fromPassword = fromPassword;
-        this.toEmailList = toEmailList;
+        this.receiver = receiver;
         this.emailSubject = emailSubject;
         this.emailBody = emailBody;
 
@@ -58,11 +58,10 @@ public class GMailSender {
         emailMessage = new MimeMessage(mailSession);
 
         emailMessage.setFrom(new InternetAddress(fromEmail, fromEmail));
-        for (String toEmail : toEmailList) {
-            Log.i("GMail", "toEmail: " + toEmail);
-            emailMessage.addRecipient(Message.RecipientType.TO,
-                    new InternetAddress(toEmail));
-        }
+
+        Log.i("GMail", "toEmail: " + receiver);
+        emailMessage.addRecipient(Message.RecipientType.TO,
+                new InternetAddress(receiver));
 
         emailMessage.setSubject(emailSubject);
         emailMessage.setContent(emailBody, "text/html");// for a html email

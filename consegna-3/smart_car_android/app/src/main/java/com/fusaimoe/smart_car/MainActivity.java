@@ -3,6 +3,7 @@ package com.fusaimoe.smart_car;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -25,10 +26,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.ColorRes;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,8 +50,6 @@ import com.fusaimoe.smart_car.email.GMailSender;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -91,17 +92,16 @@ public class MainActivity extends AppCompatActivity {
 
         initUI();
 
-        /**Codice per l'invio dell'email, non ha ancora un posto dove stare**/
-        /*Log.i("SendMailActivity", "Send Button Clicked.");
-
-        String[] spam = new String[] {EmailManagement.getEmail()};
-        List<String> toEmailList = Arrays.asList(spam);
-        new SendMailTask(MainActivity.this).execute("carcontactemergency@gmail.com",
-                "ContactService1", toEmailList, "Contatto", "Attenzione, la tua macchina ha appena subito un contatto. Verifica dove è avvenuto.");*/
+        showContactAlert();
 
         uiHandler = new MainActivityHandler(this);
     }
 
+    /**
+     * Add settings and maps action buttons to the top bar
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -116,6 +116,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Add an event to the action bar buttons
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
@@ -133,7 +138,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    //Change color to toolbar icons
+    /**
+     *Change color to toolbar icons
+     */
     public static void tintMenuIcon(Context context, MenuItem item, @ColorRes int color) {
         Drawable normalDrawable = item.getIcon();
         Drawable wrapDrawable = DrawableCompat.wrap(normalDrawable);
@@ -199,6 +206,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Initialize UI Buttons and Labels
+     */
     private void initUI() {
 
         switchOn = (ToggleButton) findViewById(R.id.onButton);
@@ -234,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
        /* virtualLed = (TextView) findViewById(R.id.virtualLed);
         turnOffVirtualLed();
 
@@ -265,6 +276,10 @@ public class MainActivity extends AppCompatActivity {
         showTempValue(0);*/
     }
 
+    /**
+     * Alert Arduino when the car is on or off
+     * @param on
+     */
     private void setOn(boolean on) {
         try {
             if(on){
@@ -277,6 +292,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Alert Arduino when the car is parking or notParking
+     * @param park
+     */
     private void setPark(boolean park) {
         try {
             if(park){
@@ -290,6 +309,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Alert Arduino when the car is moving or stopping
+     * @param moving
+     */
     private void setMoving(boolean moving) {
         try {
             if (moving) {
@@ -306,10 +329,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setContactWhileOff() {
+    private void setContactWhileOff() {}
 
-    }
-
+    /*
     private void requestTempValue() {
         try {
             BluetoothConnectionManager.getInstance().sendMsg(C.READ_TEMP_MESSAGE);
@@ -318,10 +340,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*private void showTempValue(double value) {
+    private void showTempValue(double value) {
         temperatureLabel.setText(getString(R.string.tempLabelPrefix) + " " + value);
     }*/
 
+    /**
+     * Alert to show the Bluetooth is unavailable on this device
+     */
     private void showBluetoothUnavailableAlert(){
         AlertDialog dialog = new AlertDialog.Builder(this)
             .setTitle(getString(R.string.btUnavailableAlertTitle))
@@ -334,10 +359,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             })
             .create();
-
         dialog.show();
     }
 
+    /**
+     * Method to connect the Target Bluetooth Device
+     */
     private void connectToTargetBtDevice(){
         UUID uuid = UUID.fromString(C.TARGET_BT_DEVICE_UUID);
 
@@ -387,12 +414,14 @@ public class MainActivity extends AppCompatActivity {
                 //TODO
             }
         }
-
-
     }
 
+    /**
+     * Accelerometer Listener
+     */
     public  class  AccelerometerListener  implements SensorEventListener {
         private  static  final  String  LOG_TAG = "app -tag";
+
         @Override
         public  void  onSensorChanged(SensorEvent event) {
             boolean otherFlag = false;
@@ -418,12 +447,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        @Override
-        public  void  onAccuracyChanged(Sensor  sensor , int  accuracy) {
 
-        }
+        @Override
+        public  void  onAccuracyChanged(Sensor  sensor , int  accuracy) {}
     }
 
+    /**
+     * Task to send the email
+     */
     public class SendMailTask extends AsyncTask {
 
         private ProgressDialog statusDialog;
@@ -442,14 +473,13 @@ public class MainActivity extends AppCompatActivity {
             statusDialog.show();
         }
 
-
         @Override
         protected Object doInBackground(Object... args) {
             try {
                 Log.i("SendMailTask", "About to instantiate GMail...");
                 publishProgress("Processing input....");
                 GMailSender androidEmail = new GMailSender(args[0].toString(),
-                        args[1].toString(), (List) args[2], args[3].toString(),
+                        args[1].toString(), args[2].toString(), args[3].toString(),
                         args[4].toString());
                 publishProgress("Preparing mail message....");
                 androidEmail.createEmailMessage();
@@ -465,14 +495,46 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onProgressUpdate(Object... values) {
-            statusDialog.setMessage(values[0].toString());
-
-        }
+        public void onProgressUpdate(Object... values) {statusDialog.setMessage(values[0].toString());}
 
         @Override
         public void onPostExecute(Object result) {
             statusDialog.dismiss();
         }
+    }
+
+    /**
+     * Method called to send the email
+     */
+    public void sendContactEmail(){
+
+        Log.i("SendMailActivity", "Send Button Clicked.");
+
+        new SendMailTask(MainActivity.this).execute("carcontactemergency@gmail.com",
+                "ContactService1", EmailManagement.getEmail(), "Contatto", "Attenzione, la tua macchina ha appena subito un contatto. Verifica dove è avvenuto.");
+    }
+
+    /**
+     * Personalize the contact dialog
+     */
+    public static class NoticeDialogFragment extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            // Get the layout inflater
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+
+            builder.setView(inflater.inflate(R.layout.alert_dialog, null));
+            return builder.create();
+        }
+    }
+
+    /**
+     * Call the contact dialog
+     */
+    public void showContactAlert(){
+        DialogFragment newFragment = new NoticeDialogFragment();
+        newFragment.show(getSupportFragmentManager(), "missiles");
     }
 }
