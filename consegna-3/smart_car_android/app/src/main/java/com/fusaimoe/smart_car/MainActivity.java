@@ -32,6 +32,7 @@ import com.fusaimoe.smart_car.bt.BluetoothConnectionManager;
 import com.fusaimoe.smart_car.bt.BluetoothConnectionTask;
 import com.fusaimoe.smart_car.bt.BluetoothUtils;
 import com.fusaimoe.smart_car.bt.MsgTooBigException;
+import com.fusaimoe.smart_car.email.EmailManagement;
 import com.fusaimoe.smart_car.email.GMailSender;
 
 /*import com.google.android.gms.common.ConnectionResult;
@@ -88,11 +89,10 @@ public class MainActivity extends AppCompatActivity /*implements ConnectionCallb
         /**Codice per l'invio dell'email, non ha ancora un posto dove stare**/
         /*Log.i("SendMailActivity", "Send Button Clicked.");
 
-        String[] spam = new String[] { "info@cgiulia.com", "giulia.cecchetti96@gmail.com" };
+        String[] spam = new String[] {EmailManagement.getEmail()};
         List<String> toEmailList = Arrays.asList(spam);
         new SendMailTask(MainActivity.this).execute("carcontactemergency@gmail.com",
-                "ContactService1", toEmailList, "Contatto", "Attenzione, la tua macchina ha appena subito un contatto. Verifica dove è avvenuto.");
-        */
+                "ContactService1", toEmailList, "Contatto", "Attenzione, la tua macchina ha appena subito un contatto. Verifica dove è avvenuto.");*/
 
         uiHandler = new MainActivityHandler(this);
     }
@@ -107,6 +107,19 @@ public class MainActivity extends AppCompatActivity /*implements ConnectionCallb
         if (mapItem!=null && settingsItem!=null) {
             tintMenuIcon(MainActivity.this, settingsItem, R.color.white);
             tintMenuIcon(MainActivity.this, mapItem, R.color.white);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                this.startActivity(intent);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
         return true;
     }
@@ -147,7 +160,7 @@ public class MainActivity extends AppCompatActivity /*implements ConnectionCallb
     protected void onStop() {
         super.onStop();
         //mGoogleApiClient.disconnect();
-        if(BluetoothConnectionManager.getInstance()!=null){
+        if(BluetoothConnectionManager.getInstance().isAlive()){
             BluetoothConnectionManager.getInstance().cancel();
         }
     }
