@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 
 /**
  * Created by Giulia on 14/12/2016.
@@ -16,8 +18,9 @@ import android.widget.EditText;
 public class SettingsActivity extends AppCompatActivity {
 
     private EditText email;
-    private Button save;
     private String receiverEmail;
+    private Switch notificationSwitch;
+    private boolean notifications;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,18 +36,20 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         email = (EditText)findViewById(R.id.emailTextBox);
-        save = (Button)findViewById(R.id.save);
-
-        // Change the email
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                receiverEmail = email.getText().toString();
-            }
-        });
-
+        notificationSwitch = (Switch)findViewById(R.id.emailSwitch);
         email.setText(receiverEmail);
 
+    }
+
+    /**
+     * Add settings and maps action buttons to the top bar
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu. This adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_settings, menu);
+        return true;
     }
 
     /**
@@ -63,6 +68,9 @@ public class SettingsActivity extends AppCompatActivity {
                 }
 
                 this.startActivity(mainActivityIntent);
+                return true;
+            case R.id.save:
+                receiverEmail = email.getText().toString();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

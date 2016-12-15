@@ -17,6 +17,8 @@ public class C {
     static final String CAR_MOVING = "moving";
     static final String CAR_NOT_MOVING = "notMoving";
 
+    static final String NOT_RISK_CONDITION = "notRisk";
+    static final String ARDUINO_CONTACT = "contact";
     static final String DISTANCE_PREFIX = "Distance:";
 
     static final int SERVO_MAXIMUM_VALUE = 180;

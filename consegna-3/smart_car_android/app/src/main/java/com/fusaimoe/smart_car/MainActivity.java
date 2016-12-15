@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Defualt email for testing purposes
     private String receiverEmail = "giulia.cecchetti96@gmail.com";
+    private boolean notifications;
 
     private LocationManager lm;
     private LocationListener locListener;
@@ -326,14 +327,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // Sending the email notification
-        new SendMailTask(MainActivity.this).execute(
-                R.string.emailSenderAddress,
-                R.string.emailSenderPassword,
-                receiverEmail,
-                R.string.emailObject,
-                R.string.emailMessage
-        );
+        if(notifications) {
+            // Sending the email notification
+            new SendMailTask(MainActivity.this).execute(
+                    R.string.emailSenderAddress,
+                    R.string.emailSenderPassword,
+                    receiverEmail,
+                    R.string.emailObject,
+                    R.string.emailMessage
+            );
+        }
 
     }
 
@@ -447,6 +450,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                         break;
 
+                    case C.NOT_RISK_CONDITION:
+                        context.get().hideDistanceLabel();
+                        break;
+
                     default:
                         if(message.contains(C.DISTANCE_PREFIX)) {
                             context.get().setDistanceLabel(message);
@@ -459,6 +466,21 @@ public class MainActivity extends AppCompatActivity {
                 //TODO
             }
         }
+    }
+
+    /**
+     * Show and set distance label in case of danger
+     */
+    public void setDistanceLabel(String distance){
+        distanceLabel.setVisibility(View.VISIBLE);
+        distanceLabel.setText(distance);
+    }
+
+    /**
+     * Hide Distance Label in safety conditions
+     */
+    public void hideDistanceLabel(){
+        distanceLabel.setVisibility(View.INVISIBLE);
     }
 
     /**
