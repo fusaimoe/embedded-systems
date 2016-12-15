@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        //mGoogleApiClient.disconnect();
         if(BluetoothConnectionManager.getInstance().isAlive()){
             BluetoothConnectionManager.getInstance().cancel();
         }
@@ -119,10 +118,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (accelerometer != null){
-            sm.registerListener(accListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        }
     }
 
     /**
@@ -207,11 +202,13 @@ public class MainActivity extends AppCompatActivity {
         switchOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    if (accelerometer != null) sm.registerListener(accListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL); //Enable AccListener
                     switchPark.setEnabled(false);
                     movingLabel.setVisibility(View.VISIBLE);
                     distanceLabel.setVisibility(View.VISIBLE);
                     setOn(true);
                 } else {
+                    if (accelerometer != null) sm.unregisterListener(accListener); //Disable AccListener
                     switchPark.setEnabled(true);
                     movingLabel.setVisibility(View.INVISIBLE);
                     distanceLabel.setVisibility(View.INVISIBLE);
@@ -264,6 +261,9 @@ public class MainActivity extends AppCompatActivity {
         showTempValue(0);*/
     }
 
+    /**
+     * Contact when the car is on
+     */
     private void contactWhileOn(){
 
         // Briefly notify the user with a toast that the contact happened
@@ -273,6 +273,9 @@ public class MainActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "missiles");
     }
 
+    /**
+     * Contact when the car is off
+     */
     private void contactWhileOff(){
 
         // Briefly notify the user with a toast that the contact happened
@@ -444,7 +447,6 @@ public class MainActivity extends AppCompatActivity {
         public  void  onSensorChanged(SensorEvent event) {
             boolean otherFlag = false;
             if(!sensorFlag){
-
                 for(float f : event.values){
                     if(f>2){
                         otherFlag=true;
