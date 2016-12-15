@@ -1,5 +1,6 @@
 package com.fusaimoe.smart_car;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,8 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-import com.fusaimoe.smart_car.email.EmailManagement;
 
 /**
  * Created by Giulia on 14/12/2016.
@@ -18,10 +17,16 @@ public class SettingsActivity extends AppCompatActivity {
 
     private EditText email;
     private Button save;
+    private String receiverEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            receiverEmail = (String)extras.get("receiverEmail");
+        }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -29,12 +34,16 @@ public class SettingsActivity extends AppCompatActivity {
 
         email=(EditText)findViewById(R.id.emailTextBox);
         save=(Button)findViewById(R.id.save);
-        email.setText(EmailManagement.getEmail());
+
+        /**Change the email**/
         save.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                EmailManagement.setEmail(email.getText().toString());
+            @Override
+            public void onClick(View view) {
+                receiverEmail= email.getText().toString();
             }
         });
+
+        email.setText(receiverEmail);
 
     }
 
@@ -45,7 +54,12 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                this.onBackPressed();
+                /**Send the new Email to the MainActivity, if changed**/
+                Intent mainActivityIntent = new Intent(this, MainActivity.class);
+                if(receiverEmail!=null){
+                    mainActivityIntent.putExtra("receiverEmail", receiverEmail);
+                }
+                this.startActivity(mainActivityIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

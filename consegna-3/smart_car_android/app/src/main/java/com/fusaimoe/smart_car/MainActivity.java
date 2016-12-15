@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -24,11 +23,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.ColorRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,7 +41,6 @@ import com.fusaimoe.smart_car.bt.BluetoothConnectionManager;
 import com.fusaimoe.smart_car.bt.BluetoothConnectionTask;
 import com.fusaimoe.smart_car.bt.BluetoothUtils;
 import com.fusaimoe.smart_car.bt.MsgTooBigException;
-import com.fusaimoe.smart_car.email.EmailManagement;
 import com.fusaimoe.smart_car.email.GMailSender;
 
 import org.json.JSONObject;
@@ -62,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private AccelerometerListener accListener;
     private boolean sensorFlag;
 
+    private String receiverEmail = "giulia.cecchetti96@gmail.com";
+
     private LocationManager lm;
     private LocationListener locListener;
     private Location lastContactLocation;
@@ -77,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
+
+        /**Receive new Email if changed*/
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            receiverEmail = (String)extras.get("receiverEmail");
+        }
 
         initSensors();
 
@@ -142,6 +146,9 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                if(receiverEmail!=null){
+                    settingsIntent.putExtra("receiverEmail", receiverEmail);
+                }
                 this.startActivity(settingsIntent);
                 return true;
 
@@ -304,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
         new SendMailTask(MainActivity.this).execute(
                 "carcontactemergency@gmail.com",
                 "ContactService1",
-                EmailManagement.getEmail(),
+                receiverEmail,
                 "Contatto",
                 "Attenzione, la tua macchina ha appena subito un contatto. Verifica dove è avvenuto."
         );

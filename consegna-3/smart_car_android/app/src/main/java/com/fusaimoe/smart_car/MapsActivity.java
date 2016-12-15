@@ -28,7 +28,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             lastContactLocation = (Location)extras.get("lastContact");
         }
 
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setContentView(R.layout.activity_maps);
