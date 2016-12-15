@@ -33,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ToggleButton switchOn, switchPark;
     private TextView movingLabel, distanceLabel;
+    private AlertDialog sliderDialog;
+    private SeekBar seekBar;
 
     private static MainActivityHandler uiHandler;
 
@@ -210,12 +213,16 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     if (accelerometer != null) sm.registerListener(accListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL); //Enable AccListener
+
                     switchPark.setEnabled(false);
                     movingLabel.setVisibility(View.VISIBLE);
                     distanceLabel.setVisibility(View.VISIBLE);
                     setOn(true);
+
+                    contactWhileOn();
                 } else {
                     if (accelerometer != null) sm.unregisterListener(accListener); //Disable AccListener
+
                     switchPark.setEnabled(true);
                     movingLabel.setVisibility(View.INVISIBLE);
                     distanceLabel.setVisibility(View.INVISIBLE);
@@ -276,8 +283,32 @@ public class MainActivity extends AppCompatActivity {
         // Briefly notify the user with a toast that the contact happened
         Toast.makeText(getApplicationContext(), "Contact! (ON)", Toast.LENGTH_SHORT).show();
 
-        DialogFragment newFragment = new NoticeDialogFragment();
-        newFragment.show(getSupportFragmentManager(), "missiles");
+        seekBar = (SeekBar) findViewById(R.id.slider);
+        //seekBar.setMax(180);
+
+        sliderDialog = new AlertDialog.Builder(this)
+                .setView(R.layout.alert_slider)
+                .setTitle("Contact!")
+                .setMessage("Spigni")
+                .setCancelable(false)
+                .create();
+        sliderDialog.show();
+
+        /*seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+               @Override
+               public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if(progress>seekBar.getMax()){
+                        sliderDialog.dismiss();
+                    }
+               }
+               @Override
+               public void onStartTrackingTouch(SeekBar seekBar) {
+               }
+               @Override
+               public void onStopTrackingTouch(SeekBar seekBar) {
+               }
+           }
+        );*/
     }
 
     /**
@@ -387,6 +418,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             })
             .create();
+
         dialog.show();
     }
 
@@ -527,22 +559,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPostExecute(Object result) {
             statusDialog.dismiss();
-        }
-    }
-
-    /**
-     * Personalize the contact dialog
-     */
-    public static class NoticeDialogFragment extends DialogFragment {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            // Get the layout inflater
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-
-            builder.setView(inflater.inflate(R.layout.alert_dialog, null));
-            return builder.create();
         }
     }
 
