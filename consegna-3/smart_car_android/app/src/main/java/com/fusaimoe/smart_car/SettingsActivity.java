@@ -25,21 +25,21 @@ public class SettingsActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if(extras != null){
-            receiverEmail = (String)extras.get("receiverEmail");
+            receiverEmail = (String)extras.get(C.INTENT_EMAIL);
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_settings);
 
-        email=(EditText)findViewById(R.id.emailTextBox);
-        save=(Button)findViewById(R.id.save);
+        email = (EditText)findViewById(R.id.emailTextBox);
+        save = (Button)findViewById(R.id.save);
 
-        /**Change the email**/
+        // Change the email
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                receiverEmail= email.getText().toString();
+                receiverEmail = email.getText().toString();
             }
         });
 
@@ -54,11 +54,14 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                /**Send the new Email to the MainActivity, if changed**/
+
+                // Send the new Email to the MainActivity, if changed
                 Intent mainActivityIntent = new Intent(this, MainActivity.class);
+
                 if(receiverEmail!=null){
-                    mainActivityIntent.putExtra("receiverEmail", receiverEmail);
+                    mainActivityIntent.putExtra(C.INTENT_EMAIL, receiverEmail);
                 }
+
                 this.startActivity(mainActivityIntent);
                 return true;
             default:

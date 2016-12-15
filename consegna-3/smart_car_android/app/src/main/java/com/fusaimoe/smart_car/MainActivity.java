@@ -3,7 +3,6 @@ package com.fusaimoe.smart_car;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -24,7 +23,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -59,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private AccelerometerListener accListener;
     private boolean sensorFlag;
 
+    // Defualt email for testing purposes
     private String receiverEmail = "giulia.cecchetti96@gmail.com";
 
     private LocationManager lm;
@@ -79,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
 
-        /**Receive new Email if changed*/
+        // Setting the receiver email, if it exists, received from the Settings activity
         Bundle extras = getIntent().getExtras();
         if(extras != null){
-            receiverEmail = (String)extras.get("receiverEmail");
+            receiverEmail = (String)extras.get(C.INTENT_EMAIL);
         }
 
         initSensors();
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 targetDevice = BluetoothUtils.findPairedDevice(C.TARGET_BT_DEVICE_NAME, btAdapter);
 
                 if(targetDevice != null){
-                    ((TextView) findViewById(R.id.btFoundFlagLabel)).setText("Target BT Device: Found " + targetDevice.getName());
+                    ((TextView) findViewById(R.id.btFoundFlagLabel)).setText(R.string.btDeviceFound + targetDevice.getName());
                     connectToTargetBtDevice();
                 }
             } else {
@@ -150,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 if(receiverEmail!=null){
-                    settingsIntent.putExtra("receiverEmail", receiverEmail);
+                    settingsIntent.putExtra(C.INTENT_EMAIL, receiverEmail);
                 }
                 this.startActivity(settingsIntent);
                 return true;
@@ -158,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.maps:
                 Intent mapsIntent = new Intent(this, MapsActivity.class);
                 if(lastContactLocation!=null){
-                    mapsIntent.putExtra("lastContact", lastContactLocation);
+                    mapsIntent.putExtra(C.INTENT_MAP, lastContactLocation);
                 }
                 this.startActivity(mapsIntent);
                 return true;
@@ -176,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
             targetDevice = BluetoothUtils.findPairedDevice(C.TARGET_BT_DEVICE_NAME, btAdapter);
 
             if(targetDevice != null){
-                ((TextView) findViewById(R.id.btFoundFlagLabel)).setText("Target BT Device: Found " + targetDevice.getName());
+                ((TextView) findViewById(R.id.btFoundFlagLabel)).setText(R.string.btDeviceFound + targetDevice.getName());
                 connectToTargetBtDevice();
             }
         }
@@ -212,7 +211,8 @@ public class MainActivity extends AppCompatActivity {
         switchOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (accelerometer != null) sm.registerListener(accListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL); //Enable AccListener
+                    // Enable Accelerometer Listener
+                    if (accelerometer != null) sm.registerListener(accListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
                     switchPark.setEnabled(false);
                     movingLabel.setVisibility(View.VISIBLE);
                     distanceLabel.setVisibility(View.VISIBLE);
@@ -221,7 +221,8 @@ public class MainActivity extends AppCompatActivity {
 
                     setOn(true);
                 } else {
-                    if (accelerometer != null) sm.unregisterListener(accListener); //Disable AccListener
+                    // Disable Accelerometer Listener
+                    if (accelerometer != null) sm.unregisterListener(accListener);
 
                     switchPark.setEnabled(true);
                     movingLabel.setVisibility(View.INVISIBLE);
@@ -244,26 +245,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-       /* virtualLed = (TextView) findViewById(R.id.virtualLed);
-        turnOffVirtualLed();
-
-        Button turnOnButton = (Button) findViewById(R.id.turnOnButton);
-        turnOnButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                turnOnArduinoLed();
-            }
-        });
-
-        Button turnOffButton = (Button) findViewById(R.id.turnOffButton);
-        turnOffButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                turnOffArduinoLed();
-            }
-        });
-
-        Button readTempButton = (Button) findViewById(R.id.readTempButton);
+       /*
         readTempButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -281,20 +263,20 @@ public class MainActivity extends AppCompatActivity {
     private void contactWhileOn(){
 
         // Briefly notify the user with a toast that the contact happened
-        Toast.makeText(getApplicationContext(), "Contact! (ON)", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.contactWhileOn, Toast.LENGTH_SHORT).show();
 
         LayoutInflater inflater = this.getLayoutInflater();
         View v = inflater.inflate(R.layout.alert_slider, null);
 
         sliderDialog = new AlertDialog.Builder(this)
                 .setView(v)
-                .setTitle("Contact!")
-                .setMessage("Spigni")
+                .setTitle(R.string.sliderAlertTitle)
+                .setMessage(R.string.sliderAlertMessage)
                 .setCancelable(false)
                 .create();
 
         seekBar = (SeekBar)v.findViewById(R.id.slider);
-        seekBar.setMax(180);
+        seekBar.setMax(C.SERVO_MAXIMUM_VALUE);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                @Override
@@ -320,10 +302,10 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Contact when the car is off
      */
-    private void contactWhileOff(){
+    private void contactWhilePark(){
 
         // Briefly notify the user with a toast that the contact happened
-        Toast.makeText(getApplicationContext(), "Contact! (OFF)", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.contactWhilePark, Toast.LENGTH_SHORT).show();
 
         // Permission checks for location
         final  int  ACCESS_FINE_LOCATION_REQUEST = 1234;
@@ -340,32 +322,31 @@ public class MainActivity extends AppCompatActivity {
         if(lastContactLocation==null){
             lastContactLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             if(lastContactLocation==null){
-                Toast.makeText(getApplicationContext(), "Your location can't be retrieved!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.locationNotAvailable, Toast.LENGTH_SHORT).show();
             }
         }
 
         // Sending the email notification
         new SendMailTask(MainActivity.this).execute(
-                "carcontactemergency@gmail.com",
-                "ContactService1",
+                R.string.emailSenderAddress,
+                R.string.emailSenderPassword,
                 receiverEmail,
-                "Contatto",
-                "Attenzione, la tua macchina ha appena subito un contatto. Verifica dove è avvenuto."
+                R.string.emailObject,
+                R.string.emailMessage
         );
 
     }
 
     /**
-     * Alert Arduino when the car is on or off
+     * Alert Arduino when the car is on or not
      * @param on
      */
     private void setOn(boolean on) {
         try {
             if(on){
-                BluetoothConnectionManager.getInstance().sendMsg("on");
-
+                BluetoothConnectionManager.getInstance().sendMsg(C.CAR_ON);
             }else{
-                BluetoothConnectionManager.getInstance().sendMsg("off");
+                BluetoothConnectionManager.getInstance().sendMsg(C.CAR_NOT_ON);
             }
         } catch (MsgTooBigException e) {
             e.printStackTrace();
@@ -373,16 +354,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Alert Arduino when the car is parking or notParking
+     * Alert Arduino when the car is park mode or not
      * @param park
      */
     private void setPark(boolean park) {
         try {
             if(park){
-                BluetoothConnectionManager.getInstance().sendMsg("park");
-
+                BluetoothConnectionManager.getInstance().sendMsg(C.CAR_PARK);
             }else{
-                BluetoothConnectionManager.getInstance().sendMsg("notPark");
+                BluetoothConnectionManager.getInstance().sendMsg(C.CAR_NOT_PARK);
             }
         } catch (MsgTooBigException e) {
             e.printStackTrace();
@@ -390,17 +370,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Alert Arduino when the car is moving or stopping
+     * Alert Arduino when the car is moving or after it's not moving anymore
      * @param moving
      */
     private void setMoving(boolean moving) {
         try {
             if (moving) {
-                BluetoothConnectionManager.getInstance().sendMsg("moving");
-                movingLabel.setText("The car is moving");
+                BluetoothConnectionManager.getInstance().sendMsg(C.CAR_MOVING);
+                movingLabel.setText(R.string.carMoving);
             } else {
-                BluetoothConnectionManager.getInstance().sendMsg("notMoving");
-                movingLabel.setText("The car is not moving");
+                BluetoothConnectionManager.getInstance().sendMsg(C.CAR_NOT_MOVING);
+                movingLabel.setText(R.string.carNotMoving);
 
 
             }
@@ -460,11 +440,11 @@ public class MainActivity extends AppCompatActivity {
                 String message = obj.toString();
 
                 switch (message){
-                    case C.BUTTON_PRESSED_MESSAGE:
-                        //context.get().setContactWhileOff();
+                    case C.CAR_ON:
+                        //context.get().setContactWhilePark();
                         break;
 
-                    case C.BUTTON_RELEASED_MESSAGE:
+                    case C.CAR_NOT_ON:
                         //context.get().turnOffVirtualLed();
                         break;
 

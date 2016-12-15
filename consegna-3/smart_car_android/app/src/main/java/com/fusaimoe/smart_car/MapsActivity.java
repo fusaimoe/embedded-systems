@@ -25,7 +25,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Bundle extras = getIntent().getExtras();
         if(extras != null){
-            lastContactLocation = (Location)extras.get("lastContact");
+            lastContactLocation = (Location)extras.get(C.INTENT_MAP);
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -63,7 +63,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if(lastContactLocation!=null){
             LatLng pos = new LatLng(lastContactLocation.getLatitude(), lastContactLocation.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(pos).title("Last Contact was here"));
+            mMap.addMarker(new MarkerOptions().position(pos).title(getApplicationContext().getString(R.string.locationMarkerTitle)));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(pos));
         }
     }

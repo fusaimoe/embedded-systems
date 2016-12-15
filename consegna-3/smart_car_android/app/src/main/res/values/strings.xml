@@ -1,15 +1,32 @@
 <resources>
     <string name="app_name">Smart Car</string>
 
+
+
     <string name="tempLabelPrefix">T (°C):</string>
 
+    <string name="btDeviceFound">Target BT Device: Found</string>
     <string name="btUnavailableAlertTitle">Warning</string>
     <string name="btUnavailableAlertMessage">Bluetooth unavailable on this device</string>
     <string name="btUnavailableAlertBtnText">Close APP</string>
 
+    <string name="locationNotAvailable">Your location can't be retrieved!</string>
+    <string name="locationMarkerTitle">The last contact, while parked, was registered here</string>
 
-    <string name="virtualLedSectionLabel">Virtual LED</string>
-    <string name="arduinoLedSectionLabel">Arduino LED Management</string>
+    <string name="sliderAlertTitle">Attack</string>
+    <string name="sliderAlertMessage">Control the servo until you reach maximum power</string>
+
+    <string name="contactWhilePark">Contact! (PARK)</string>
+    <string name="contactWhileOn">Contact! (ON)</string>
+
+    <string name="emailSenderAddress">carcontactemergency@gmail.com</string>
+    <string name="emailSenderPassword">⁠⁠⁠ContactService1</string>
+    <string name="emailObject">Smart Car Service - Contact</string>
+    <string name="emailMessage">Your car suffered a contact while it was parked. Check where it happened on the app</string>
+
+
+    <string name="carMoving">The car is moving</string>
+    <string name="carNotMoving">The car is not moving</string>
     <string name="sensorSectionLabel">Sensor Management</string>
 
     <string name="turnOnButtonText">Turn On</string>
