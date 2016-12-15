@@ -62,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
     private AccelerometerListener accListener;
     private boolean sensorFlag;
 
+    private LocationManager lm;
+    private LocationListener locListener;
+    private Location lastContactLocation;
+
     private ToggleButton switchOn, switchPark;
     private TextView movingLabel, distanceLabel;
 
@@ -71,82 +75,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Permission Checks
-        final  int  ACCESS_FINE_LOCATION_REQUEST = 1234;
-        int  permission = ContextCompat.checkSelfPermission(this ,
-                Manifest.permission.ACCESS_FINE_LOCATION);
-        if (permission  !=  PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION
-            }, ACCESS_FINE_LOCATION_REQUEST);
-        }
-
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
 
-        sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        accelerometer = sm.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        if (accelerometer != null) {
-            accListener = new AccelerometerListener();
-        }
+        initSensors();
 
         initUI();
 
-        showContactAlert();
-
         uiHandler = new MainActivityHandler(this);
-    }
-
-    /**
-     * Add settings and maps action buttons to the top bar
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem settingsItem = menu.findItem(R.id.settings);
-        MenuItem mapItem = menu.findItem(R.id.maps);
-
-        if (mapItem!=null && settingsItem!=null) {
-            tintMenuIcon(MainActivity.this, settingsItem, R.color.white);
-            tintMenuIcon(MainActivity.this, mapItem, R.color.white);
-        }
-        return true;
-    }
-
-    /**
-     * Add an event to the action bar buttons
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                this.startActivity(intent);
-                break;
-            case R.id.maps:
-                Intent intent2 = new Intent(this, MapsActivity.class);
-                this.startActivity(intent2);
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        return true;
-    }
-
-    /**
-     *Change color to toolbar icons
-     */
-    public static void tintMenuIcon(Context context, MenuItem item, @ColorRes int color) {
-        Drawable normalDrawable = item.getIcon();
-        Drawable wrapDrawable = DrawableCompat.wrap(normalDrawable);
-        DrawableCompat.setTint(wrapDrawable, context.getResources().getColor(color));
-
-        item.setIcon(wrapDrawable);
     }
 
     @Override
@@ -189,6 +125,45 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Add settings and maps action buttons to the top bar
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu. This adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    /**
+     * Add an event to the action bar buttons
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+
+            case R.id.settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                this.startActivity(settingsIntent);
+                return true;
+
+            case R.id.maps:
+                Intent mapsIntent = new Intent(this, MapsActivity.class);
+                if(lastContactLocation!=null){
+                    mapsIntent.putExtra("lastContact", lastContactLocation);
+                }
+                this.startActivity(mapsIntent);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
     @Override
     public void onActivityResult (int reqID , int res , Intent data ){
 
@@ -203,6 +178,19 @@ public class MainActivity extends AppCompatActivity {
 
         if(reqID == C.ENABLE_BT_REQUEST && res == Activity.RESULT_CANCELED ){
             // BT enabling process aborted
+        }
+    }
+
+    /**
+     * Initialize Accelerometer and Locator
+     */
+    private void initSensors() {
+        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = sm.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        if (accelerometer != null) {
+            accListener = new AccelerometerListener();
         }
     }
 
@@ -276,6 +264,50 @@ public class MainActivity extends AppCompatActivity {
         showTempValue(0);*/
     }
 
+    private void contactWhileOn(){
+
+        // Briefly notify the user with a toast that the contact happened
+        Toast.makeText(getApplicationContext(), "Contact! (ON)", Toast.LENGTH_SHORT).show();
+
+        DialogFragment newFragment = new NoticeDialogFragment();
+        newFragment.show(getSupportFragmentManager(), "missiles");
+    }
+
+    private void contactWhileOff(){
+
+        // Briefly notify the user with a toast that the contact happened
+        Toast.makeText(getApplicationContext(), "Contact! (OFF)", Toast.LENGTH_SHORT).show();
+
+        // Permission checks for location
+        final  int  ACCESS_FINE_LOCATION_REQUEST = 1234;
+        int  permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permission  !=  PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            }, ACCESS_FINE_LOCATION_REQUEST);
+        }
+
+        // Get current position using GPS
+        lastContactLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        // If GPS isn't returning a position, get current position using Network
+        if(lastContactLocation==null){
+            lastContactLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if(lastContactLocation==null){
+                Toast.makeText(getApplicationContext(), "Your location can't be retrieved!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        // Sending the email notification
+        new SendMailTask(MainActivity.this).execute(
+                "carcontactemergency@gmail.com",
+                "ContactService1",
+                EmailManagement.getEmail(),
+                "Contatto",
+                "Attenzione, la tua macchina ha appena subito un contatto. Verifica dove è avvenuto."
+        );
+
+    }
+
     /**
      * Alert Arduino when the car is on or off
      * @param on
@@ -284,6 +316,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             if(on){
                 BluetoothConnectionManager.getInstance().sendMsg("on");
+
             }else{
                 BluetoothConnectionManager.getInstance().sendMsg("off");
             }
@@ -328,21 +361,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-    private void setContactWhileOff() {}
-
-    /*
-    private void requestTempValue() {
-        try {
-            BluetoothConnectionManager.getInstance().sendMsg(C.READ_TEMP_MESSAGE);
-        } catch (MsgTooBigException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showTempValue(double value) {
-        temperatureLabel.setText(getString(R.string.tempLabelPrefix) + " " + value);
-    }*/
 
     /**
      * Alert to show the Bluetooth is unavailable on this device
@@ -504,17 +522,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Method called to send the email
-     */
-    public void sendContactEmail(){
-
-        Log.i("SendMailActivity", "Send Button Clicked.");
-
-        new SendMailTask(MainActivity.this).execute("carcontactemergency@gmail.com",
-                "ContactService1", EmailManagement.getEmail(), "Contatto", "Attenzione, la tua macchina ha appena subito un contatto. Verifica dove è avvenuto.");
-    }
-
-    /**
      * Personalize the contact dialog
      */
     public static class NoticeDialogFragment extends DialogFragment {
@@ -530,11 +537,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Call the contact dialog
-     */
-    public void showContactAlert(){
-        DialogFragment newFragment = new NoticeDialogFragment();
-        newFragment.show(getSupportFragmentManager(), "missiles");
+    /*
+    private void requestTempValue() {
+        try {
+            BluetoothConnectionManager.getInstance().sendMsg(C.READ_TEMP_MESSAGE);
+        } catch (MsgTooBigException e) {
+            e.printStackTrace();
+        }
     }
+
+    private void showTempValue(double value) {
+        temperatureLabel.setText(getString(R.string.tempLabelPrefix) + " " + value);
+    }*/
+
 }
