@@ -8,6 +8,7 @@ public class C {
     static final String TARGET_BT_DEVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB";
 
     static final String INTENT_EMAIL = "receiverEmail";
+    static final String SAVE_EMAIL = "receiverEmail";
     static final String INTENT_MAP = "lastContact";
 
     static final String CAR_ON = "on";

@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -57,9 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private AccelerometerListener accListener;
     private boolean sensorFlag;
 
-    // Defualt email for testing purposes
-    private String receiverEmail = "giulia.cecchetti96@gmail.com";
-    private boolean notifications;
+    private SharedPreferences preferences;
 
     private LocationManager lm;
     private LocationListener locListener;
@@ -82,11 +81,7 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_main);
 
-        // Setting the receiver email, if it exists, received from the Settings activity
-        Bundle extras = getIntent().getExtras();
-        if(extras != null){
-            receiverEmail = (String)extras.get(C.INTENT_EMAIL);
-        }
+        preferences = this.getPreferences(Context.MODE_PRIVATE);
 
         initSensors();
 
@@ -153,9 +148,6 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.settings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                if(receiverEmail!=null){
-                    settingsIntent.putExtra(C.INTENT_EMAIL, receiverEmail);
-                }
                 this.startActivity(settingsIntent);
                 return true;
 
@@ -287,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
 
         updateLastLocation();
 
-        if(notifications) {
+        if(preferences.getBoolean(getString(R.string.userNotificationsPreference), false)) {
             sendEmail();
         }
 
@@ -374,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
         task.execute();
     }
 
-    // --------------------------- Distance Methods --------------------------- //
+    // --------------------------- Other Methods --------------------------- //
 
     /**
      * Set distance label in case of danger
@@ -427,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
         new SendMailTask(MainActivity.this).execute(
                 R.string.emailSenderAddress,
                 R.string.emailSenderPassword,
-                receiverEmail,
+                preferences.getString(getString(R.string.userEmailPreference), "giuliacecchetti96@gmail.com"),
                 R.string.emailObject,
                 R.string.emailMessage
         );
@@ -436,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * todo
      */
-    private void showToast(String message){
+    protected void showToast(String message){
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 

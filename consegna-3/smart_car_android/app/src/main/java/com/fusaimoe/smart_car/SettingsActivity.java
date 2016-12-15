@@ -1,15 +1,16 @@
 package com.fusaimoe.smart_car;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 /**
  * Created by Giulia on 14/12/2016.
@@ -18,27 +19,28 @@ import android.widget.Switch;
 public class SettingsActivity extends AppCompatActivity {
 
     private EditText email;
-    private String receiverEmail;
-    private Switch notificationSwitch;
-    private boolean notifications;
+    private Switch notifications;
+    private SharedPreferences preferences;
 
+    /**
+     * todo
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle extras = getIntent().getExtras();
-        if(extras != null){
-            receiverEmail = (String)extras.get(C.INTENT_EMAIL);
-        }
+        preferences = this.getPreferences(Context.MODE_PRIVATE);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_settings);
 
         email = (EditText)findViewById(R.id.emailTextBox);
-        notificationSwitch = (Switch)findViewById(R.id.emailSwitch);
-        email.setText(receiverEmail);
+        notifications = (Switch)findViewById(R.id.emailSwitch);
 
+        // Set both values either to their saved values or to default values
+        email.setText(preferences.getString(getString(R.string.userEmailPreference), getString(R.string.emailDefaultAddress)));
+        notifications.setChecked(preferences.getBoolean(getString(R.string.userNotificationsPreference), false));
     }
 
     /**
@@ -53,25 +55,35 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * react to the user tapping the back/up icon in the action bar
+     * React to the user tapping the back icon in the action bar
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
 
-                // Send the new Email to the MainActivity, if changed
                 Intent mainActivityIntent = new Intent(this, MainActivity.class);
-
-                if(receiverEmail!=null){
-                    mainActivityIntent.putExtra(C.INTENT_EMAIL, receiverEmail);
-                }
-
                 this.startActivity(mainActivityIntent);
+
                 return true;
             case R.id.save:
-                receiverEmail = email.getText().toString();
-                return true;
+
+                SharedPreferences.Editor editor = preferences.edit();
+
+                editor.putBoolean(getString(R.string.userNotificationsPreference), notifications.isChecked());
+
+                if(!email.getText().toString().equals("") || !email.getText().toString().contains("@") || !email.getText().toString().contains(".")){
+
+                    editor.putString(getString(R.string.userEmailPreference), email.getText().toString());
+                    editor.commit();
+
+                    return true;
+
+                } else {
+
+                    Toast.makeText(getApplicationContext(), R.string.emailNotValid, Toast.LENGTH_SHORT).show();
+
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
