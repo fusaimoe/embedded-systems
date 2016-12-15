@@ -213,13 +213,13 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     if (accelerometer != null) sm.registerListener(accListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL); //Enable AccListener
-
                     switchPark.setEnabled(false);
                     movingLabel.setVisibility(View.VISIBLE);
                     distanceLabel.setVisibility(View.VISIBLE);
-                    setOn(true);
 
                     contactWhileOn();
+
+                    setOn(true);
                 } else {
                     if (accelerometer != null) sm.unregisterListener(accListener); //Disable AccListener
 
@@ -283,21 +283,23 @@ public class MainActivity extends AppCompatActivity {
         // Briefly notify the user with a toast that the contact happened
         Toast.makeText(getApplicationContext(), "Contact! (ON)", Toast.LENGTH_SHORT).show();
 
-        seekBar = (SeekBar) findViewById(R.id.slider);
-        //seekBar.setMax(180);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View v = inflater.inflate(R.layout.alert_slider, null);
 
         sliderDialog = new AlertDialog.Builder(this)
-                .setView(R.layout.alert_slider)
+                .setView(v)
                 .setTitle("Contact!")
                 .setMessage("Spigni")
                 .setCancelable(false)
                 .create();
-        sliderDialog.show();
 
-        /*seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBar = (SeekBar)v.findViewById(R.id.slider);
+        seekBar.setMax(180);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                @Override
                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if(progress>seekBar.getMax()){
+                    if(progress==seekBar.getMax()){
                         sliderDialog.dismiss();
                     }
                }
@@ -308,7 +310,11 @@ public class MainActivity extends AppCompatActivity {
                public void onStopTrackingTouch(SeekBar seekBar) {
                }
            }
-        );*/
+        );
+
+        sliderDialog.create();
+        sliderDialog.show();
+
     }
 
     /**
