@@ -5,6 +5,7 @@
     <string name="distanceSuffixLabel">meters far</string>
 
     <string name="btDeviceFound">Target BT Device: Found</string>
+    <string name="btDeviceStatus">Target BT Status: </string>
     <string name="btUnavailableAlertTitle">Warning</string>
     <string name="btUnavailableAlertMessage">Bluetooth unavailable on this device</string>
     <string name="btUnavailableAlertBtnText">Close APP</string>

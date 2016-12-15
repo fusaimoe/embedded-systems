@@ -72,10 +72,12 @@ public class SettingsActivity extends AppCompatActivity {
 
                 editor.putBoolean(getString(R.string.userNotificationsPreference), notifications.isChecked());
 
-                if(!email.getText().toString().equals("") || !email.getText().toString().contains("@") || !email.getText().toString().contains(".")){
+                if(!email.getText().toString().equals("") && email.getText().toString().contains("@") && email.getText().toString().contains(".")){
 
                     editor.putString(getString(R.string.userEmailPreference), email.getText().toString());
                     editor.commit();
+
+                    this.onBackPressed();
 
                     return true;
 
