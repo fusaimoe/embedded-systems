@@ -72,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static MainActivityHandler uiHandler;
 
+    /**
+     * todo
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
         uiHandler = new MainActivityHandler(this);
     }
 
+    /**
+     * todo
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -114,26 +120,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * todo
+     */
     @Override
     protected void onStop() {
         super.onStop();
         if(BluetoothConnectionManager.getInstance().isAlive()){
             BluetoothConnectionManager.getInstance().cancel();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+        //todo : Should we deactivate the accelerometer here?
     }
 
     /**
-     * Add settings and maps action buttons to the top bar
+     * Add settings and maps action buttons to the menu if they are not present
      * @return
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu. This adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -169,6 +173,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * todo
+     */
     @Override
     public void onActivityResult (int reqID , int res , Intent data ){
 
@@ -186,17 +193,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // --------------------------- Initializations --------------------------- //
+
     /**
      * Initialize Accelerometer and Locator
      */
     private void initSensors() {
+
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
         accelerometer = sm.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+
         if (accelerometer != null) {
             accListener = new AccelerometerListener();
         }
+
     }
 
     /**
@@ -211,9 +224,12 @@ public class MainActivity extends AppCompatActivity {
 
         switchOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                 if (isChecked) {
+
                     // Enable Accelerometer Listener
                     if (accelerometer != null) sm.registerListener(accListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
                     switchPark.setEnabled(false);
                     movingLabel.setVisibility(View.VISIBLE);
                     distanceLabel.setVisibility(View.VISIBLE);
@@ -221,7 +237,9 @@ public class MainActivity extends AppCompatActivity {
                     contactWhileOn();
 
                     setOn(true);
+
                 } else {
+
                     // Disable Accelerometer Listener
                     if (accelerometer != null) sm.unregisterListener(accListener);
 
@@ -245,58 +263,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-       /*
-        readTempButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                requestTempValue();
-            }
-        });
-
-        temperatureLabel = (TextView) findViewById(R.id.tempLabel);
-        showTempValue(0);*/
     }
+
+    // --------------------------- App Methods --------------------------- //
 
     /**
      * Contact when the car is on
      */
     private void contactWhileOn(){
 
-        // Briefly notify the user with a toast that the contact happened
-        Toast.makeText(getApplicationContext(), R.string.contactWhileOn, Toast.LENGTH_SHORT).show();
+        showToast(getApplicationContext().getString(R.string.contactWhileOn));
 
-        LayoutInflater inflater = this.getLayoutInflater();
-        View v = inflater.inflate(R.layout.alert_slider, null);
-
-        sliderDialog = new AlertDialog.Builder(this)
-                .setView(v)
-                .setTitle(R.string.sliderAlertTitle)
-                .setMessage(R.string.sliderAlertMessage)
-                .setCancelable(false)
-                .create();
-
-        seekBar = (SeekBar)v.findViewById(R.id.slider);
-        seekBar.setMax(C.SERVO_MAXIMUM_VALUE);
-
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-               @Override
-               public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if(progress==seekBar.getMax()){
-                        sliderDialog.dismiss();
-                    }
-               }
-               @Override
-               public void onStartTrackingTouch(SeekBar seekBar) {
-               }
-               @Override
-               public void onStopTrackingTouch(SeekBar seekBar) {
-               }
-           }
-        );
-
-        sliderDialog.create();
-        sliderDialog.show();
+        showContactAlert();
 
     }
 
@@ -305,37 +283,12 @@ public class MainActivity extends AppCompatActivity {
      */
     private void contactWhilePark(){
 
-        // Briefly notify the user with a toast that the contact happened
-        Toast.makeText(getApplicationContext(), R.string.contactWhilePark, Toast.LENGTH_SHORT).show();
+        showToast(getApplicationContext().getString(R.string.contactWhilePark));
 
-        // Permission checks for location
-        final  int  ACCESS_FINE_LOCATION_REQUEST = 1234;
-        int  permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (permission  !=  PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.ACCESS_FINE_LOCATION
-            }, ACCESS_FINE_LOCATION_REQUEST);
-        }
-
-        // Get current position using GPS
-        lastContactLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        // If GPS isn't returning a position, get current position using Network
-        if(lastContactLocation==null){
-            lastContactLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if(lastContactLocation==null){
-                Toast.makeText(getApplicationContext(), R.string.locationNotAvailable, Toast.LENGTH_SHORT).show();
-            }
-        }
+        updateLastLocation();
 
         if(notifications) {
-            // Sending the email notification
-            new SendMailTask(MainActivity.this).execute(
-                    R.string.emailSenderAddress,
-                    R.string.emailSenderPassword,
-                    receiverEmail,
-                    R.string.emailObject,
-                    R.string.emailMessage
-            );
+            sendEmail();
         }
 
     }
@@ -384,13 +337,13 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 BluetoothConnectionManager.getInstance().sendMsg(C.CAR_NOT_MOVING);
                 movingLabel.setText(R.string.carNotMoving);
-
-
             }
         } catch (MsgTooBigException e) {
             e.printStackTrace();
         }
     }
+
+    // --------------------------- Bluetooth Methods --------------------------- //
 
     /**
      * Alert to show the Bluetooth is unavailable on this device
@@ -421,9 +374,112 @@ public class MainActivity extends AppCompatActivity {
         task.execute();
     }
 
-    public static MainActivityHandler getHandler(){
-        return uiHandler;
+    // --------------------------- Distance Methods --------------------------- //
+
+    /**
+     * Set distance label in case of danger
+     */
+    private void setDistance(String distance){
+        distanceLabel.setText(getString(R.string.distancePrefixLabel) +" "+ distance +" "+ getString(R.string.distanceSuffixLabel));
     }
+
+    /**
+     * Hide Distance Label in safety conditions
+     */
+    private void showDistance(boolean show){
+        if(show){
+            distanceLabel.setVisibility(View.VISIBLE);
+        } else {
+            distanceLabel.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * todo
+     */
+    private void updateLastLocation(){
+
+        // Permission checks for location
+        final  int  ACCESS_FINE_LOCATION_REQUEST = 1234;
+        int  permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permission  !=  PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            }, ACCESS_FINE_LOCATION_REQUEST);
+        }
+
+        // Get current position using GPS
+        lastContactLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        // If GPS isn't returning a position, get current position using Network
+        if(lastContactLocation==null){
+            lastContactLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if(lastContactLocation==null){
+                Toast.makeText(getApplicationContext(), R.string.locationNotAvailable, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
+     * todo
+     */
+    private void sendEmail(){
+        // Sending the email notification
+        new SendMailTask(MainActivity.this).execute(
+                R.string.emailSenderAddress,
+                R.string.emailSenderPassword,
+                receiverEmail,
+                R.string.emailObject,
+                R.string.emailMessage
+        );
+    }
+
+    /**
+     * todo
+     */
+    private void showToast(String message){
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     *
+     */
+    private void showContactAlert(){
+        LayoutInflater inflater = this.getLayoutInflater();
+        View v = inflater.inflate(R.layout.alert_slider, null);
+
+        sliderDialog = new AlertDialog.Builder(this)
+                .setView(v)
+                .setTitle(R.string.sliderAlertTitle)
+                .setMessage(R.string.sliderAlertMessage)
+                .setCancelable(false)
+                .create();
+
+        seekBar = (SeekBar)v.findViewById(R.id.slider);
+        seekBar.setMax(C.SERVO_MAXIMUM_VALUE);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    try {
+                        BluetoothConnectionManager.getInstance().sendMsg(C.SLIDER_PREFIX + Integer.toString(progress));
+                    } catch (MsgTooBigException e) {
+                        e.printStackTrace();
+                    }
+                    if(progress==seekBar.getMax()){
+                        sliderDialog.dismiss();
+                    }
+                }
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {}
+            }
+        );
+
+        sliderDialog.show();
+    }
+
+    // --------------------------- Inner Classes --------------------------- //
 
     /**
      * The Handler Associated to the MainActivity Class
@@ -436,7 +492,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void handleMessage(Message msg) {
-          Object obj = msg.obj;
+            Object obj = msg.obj;
 
             if(obj instanceof String){
                 String message = obj.toString();
@@ -450,13 +506,16 @@ public class MainActivity extends AppCompatActivity {
                         }
                         break;
 
-                    case C.NOT_RISK_CONDITION:
-                        context.get().hideDistanceLabel();
+                    case C.ARDUINO_NOT_RISK:
+                        context.get().showDistance(false);
                         break;
 
+                    case C.ARDUINO_RISK:
+                        context.get().showDistance(true);
+                        break;
                     default:
                         if(message.contains(C.DISTANCE_PREFIX)) {
-                            context.get().setDistanceLabel(message);
+                            context.get().setDistance(message);
                         }
                         break;
                 }
@@ -469,18 +528,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Show and set distance label in case of danger
+     * Getter for the MainActivityHandler
      */
-    public void setDistanceLabel(String distance){
-        distanceLabel.setVisibility(View.VISIBLE);
-        distanceLabel.setText(distance);
-    }
-
-    /**
-     * Hide Distance Label in safety conditions
-     */
-    public void hideDistanceLabel(){
-        distanceLabel.setVisibility(View.INVISIBLE);
+    public static MainActivityHandler getHandler(){
+        return uiHandler;
     }
 
     /**
@@ -568,18 +619,5 @@ public class MainActivity extends AppCompatActivity {
             statusDialog.dismiss();
         }
     }
-
-    /*
-    private void requestTempValue() {
-        try {
-            BluetoothConnectionManager.getInstance().sendMsg(C.READ_TEMP_MESSAGE);
-        } catch (MsgTooBigException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void showTempValue(double value) {
-        temperatureLabel.setText(getString(R.string.tempLabelPrefix) + " " + value);
-    }*/
 
 }

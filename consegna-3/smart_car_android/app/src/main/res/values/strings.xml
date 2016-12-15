@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">Smart Car</string>
 
-
-
-    <string name="tempLabelPrefix">T (°C):</string>
+    <string name="distancePrefixLabel">The car behind you is</string>
+    <string name="distanceSuffixLabel">meters far</string>
 
     <string name="btDeviceFound">Target BT Device: Found</string>
     <string name="btUnavailableAlertTitle">Warning</string>
@@ -24,14 +23,10 @@
     <string name="emailObject">Smart Car Service - Contact</string>
     <string name="emailMessage">Your car suffered a contact while it was parked. Check where it happened on the app</string>
 
-
     <string name="carMoving">The car is moving</string>
     <string name="carNotMoving">The car is not moving</string>
     <string name="sensorSectionLabel">Sensor Management</string>
 
-    <string name="turnOnButtonText">Turn On</string>
-    <string name="turnOffButtonText">Turn Off</string>
-    <string name="readTempButtonText">Read Temp</string>
     <string name="title_activity_maps">Map</string>
 
 
