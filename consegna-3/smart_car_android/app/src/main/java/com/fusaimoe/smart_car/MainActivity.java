@@ -433,25 +433,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void handleMessage(Message msg) {
-
-            Object obj = msg.obj;
+          Object obj = msg.obj;
 
             if(obj instanceof String){
                 String message = obj.toString();
 
-                switch (message){
-                    case C.CAR_ON:
-                        //context.get().setContactWhilePark();
-                        break;
-
-                    case C.CAR_NOT_ON:
-                        //context.get().turnOffVirtualLed();
+                switch (message) {
+                    case C.ARDUINO_CONTACT:
+                        if(context.get().switchOn.isChecked()){
+                            context.get().contactWhileOn();
+                        }else {
+                            context.get().contactWhilePark();
+                        }
                         break;
 
                     default:
-                        /*if(message.contains(C.TEMP_ANSWER_PREFIX)) {
-                            context.get().showTempValue(Double.parseDouble(message.replace(C.TEMP_ANSWER_PREFIX, "")));
-                        }*/
+                        if(message.contains(C.DISTANCE_PREFIX)) {
+                            context.get().setDistanceLabel(message);
+                        }
                         break;
                 }
             }
