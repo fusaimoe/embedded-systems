@@ -23,5 +23,4 @@ public class C {
 
     static final int ENABLE_BT_REQUEST = 1;
 
-
 }

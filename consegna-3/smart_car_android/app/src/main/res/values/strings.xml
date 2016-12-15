@@ -10,7 +10,7 @@
     <string name="btUnavailableAlertMessage">Bluetooth unavailable on this device</string>
     <string name="btUnavailableAlertBtnText">Close APP</string>
 
-    <string name="locationNotAvailable">Your location can't be retrieved!</string>
+    <string name="locationNotAvailable">Your location cant be retrieved!</string>
     <string name="locationMarkerTitle">The last contact, while parked, was registered here</string>
 
     <string name="sliderAlertTitle">Attack</string>
