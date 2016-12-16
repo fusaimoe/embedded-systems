@@ -6,6 +6,9 @@ SharedContext::SharedContext(){
   contact = false;
   danger = false;
   attack = false;
+
+  on = false;
+  park = false;
 };
 
 bool SharedContext::isStopped(){
@@ -44,6 +47,23 @@ int SharedContext::getAttack(){
   return this->attack;
 };
 
-void SharedContext::resetAttack(){
-  this->attack = 0;
+void SharedContext::setAttack(int attack){
+  this->attack = attack;
 }
+
+
+bool SharedContext::isOn(){
+	return on;
+};
+
+void SharedContext::setOn(bool on){
+	this->on = on;
+};
+
+bool SharedContext::isPark(){
+	return park;
+};
+
+void SharedContext::setPark(bool park){
+	this->park = park;
+};

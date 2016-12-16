@@ -12,7 +12,7 @@ public class C {
     static final String INTENT_MAP = "lastContact";
 
     static final String CAR_ON = "on";
-    static final String CAR_NOT_ON = "notON";
+    static final String CAR_NOT_ON = "notOn";
     static final String CAR_PARK = "park";
     static final String CAR_NOT_PARK = "notPark";
     static final String CAR_MOVING = "moving";

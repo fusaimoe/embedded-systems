@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 targetDevice = BluetoothUtils.findPairedDevice(C.TARGET_BT_DEVICE_NAME, btAdapter);
 
                 if(targetDevice != null){
-                    ((TextView) findViewById(R.id.btFoundFlagLabel)).setText(R.string.btDeviceFound + targetDevice.getName());
+                    ((TextView) findViewById(R.id.btFoundFlagLabel)).setText(getString(R.string.btDeviceFound) + " " + targetDevice.getName());
                     connectToTargetBtDevice();
                 }
             } else {
@@ -225,9 +225,6 @@ public class MainActivity extends AppCompatActivity {
                     switchPark.setEnabled(false);
                     movingLabel.setVisibility(View.VISIBLE);
                     distanceLabel.setVisibility(View.VISIBLE);
-
-                    contactWhileOn();
-
                     setOn(true);
 
                 } else {

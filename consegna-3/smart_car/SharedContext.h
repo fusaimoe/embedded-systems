@@ -4,6 +4,12 @@
 class SharedContext {
 public:
   SharedContext();
+
+  bool isOn();
+  void setOn(bool on);
+  bool isPark();
+  void setPark(bool park);
+
   bool isStopped();
   void setStopped(bool stopped);
   bool isMoving();
@@ -13,9 +19,12 @@ public:
   bool isDanger();
   void setDanger(bool danger);
   int getAttack();
-  void resetAttack();
+  void setAttack(int attack);
 
 private:
+  bool on;
+  bool park;
+
   bool stopped;
   bool moving;
   bool contact;

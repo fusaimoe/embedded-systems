@@ -19,3 +19,5 @@ private:
     void init(int period);
     void tick();
 };
+
+#endif

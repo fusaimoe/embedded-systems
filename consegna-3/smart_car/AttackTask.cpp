@@ -1,10 +1,9 @@
 #include "AttackTask.h"
 #include "Arduino.h"
 
-AttackTask::AttackTask(SharedContext* shared, AppSlider* slider, Servo* servo) {
+AttackTask::AttackTask(SharedContext* shared/*, Servo* servo*/) {
   this->shared = shared;
-  this->slider = slider;
-  this->servo = servo;
+  //this->servo = servo;
 }
 
 void AttackTask::init(int period) {
@@ -12,7 +11,7 @@ void AttackTask::init(int period) {
   state = OFF;
 }
 
-void DetectSliderTask::tick() {
+void AttackTask::tick() {
   switch (state) {
     case OFF:
       if (shared->isContact()) {
@@ -20,15 +19,15 @@ void DetectSliderTask::tick() {
       }
       break;
     case ON:
-      servo->setValue(slider->getValue());
-      if (slider->getValue() = 180) {
+      //servo->setValue(shared->getAttack());
+      if (shared->getAttack() == 180) {
         state = FULL;
       }
       break;
     case FULL:
       shared->setContact(false);
-      shared->resetAttack();
-      servo->resetValue();
+      shared->setAttack(0);
+      //servo->resetValue();
       state = OFF;
       break;
   }

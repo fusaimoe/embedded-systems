@@ -9,5 +9,6 @@
 #define UECHO 6
 #define TX 7
 #define RX 8
+#define SERVO 9
 
 #endif

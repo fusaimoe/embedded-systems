@@ -1,4 +1,4 @@
-#ifndef __ILLUMINATEWARNINGPTASK__
+#ifndef __ILLUMINATEWARNINGTASK__
 #define __ILLUMINATEWARNINGTASK__
 
 #include "Task.h"
@@ -20,3 +20,5 @@ private:
     void init(int period);
     void tick();
 };
+
+#endif

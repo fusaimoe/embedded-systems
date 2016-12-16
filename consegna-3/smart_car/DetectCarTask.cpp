@@ -1,11 +1,8 @@
 #include "DetectCarTask.h"
 #include "Arduino.h"
 
-DetectCarTask::DetectCarTask(SharedContext* shared, AppButton* buttonPark, AppButton* buttonMove, AppButton* buttonOn) {
+DetectCarTask::DetectCarTask(SharedContext* shared) {
   this->shared = shared;
-  this->buttonPark = buttonPark;
-  this->buttonMove = buttonMove;
-  this->buttonOn = buttonOn;
 }
 
 void DetectCarTask::init(int period) {
@@ -16,35 +13,33 @@ void DetectCarTask::init(int period) {
 void DetectCarTask::tick() {
   switch (state) {
     case OFF:
-      if (buttonPark->isPressed()) {
+      if (shared->isPark()) {
         shared->setStopped(true);
         state = OFFPARK;
       }
-      if (buttonOn->isPressed()) {
+      if (shared->isOn()) {
         shared->setStopped(true);
         state = ONSTOP;
       }
       break;
     case ONSTOP:
-      if (buttonMove->isPressed()) {
+      if (shared->isMoving()) {
         shared->setStopped(false);
-        shared->setMoving(true);
         state = ONMOVE;
       }
-      if (!buttonOn->isPressed()) {
+      if (!shared->isOn()) {
         shared->setStopped(false);
         state = OFF;
       }
       break;
     case ONMOVE:
-      if (!buttonMove->isPressed()) {
+      if (!shared->isMoving()) {
         shared->setStopped(true);
-        shared->setStopped(false);
         state = ONSTOP;
       }
       break;
     case OFFPARK:
-      if (!buttonPark->isPressed()) {
+      if (!shared->isPark()) {
         shared->setStopped(false);
         state = OFF;
       }
