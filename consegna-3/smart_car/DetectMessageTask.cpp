@@ -13,24 +13,25 @@ void DetectMessageTask::init(int period) {
 void DetectMessageTask::tick() {
 
   if (msgService->isMsgAvailable()){
-    Msg* msg = msgService->receiveMsg();
-    if(msg->getContent() == "park"){
+    Msg* message = msgService->receiveMsg();
+    String msg = message->getContent();
+    if(msg == "park"){
        shared->setPark(true);
-    } else if(msg->getContent() == "notPark"){
+    } else if(msg == "notPark"){
        shared->setPark(false);
-    } else if(msg->getContent() == "on"){
+    } else if(msg == "on"){
        shared->setOn(true);
-    } else if(msg->getContent() == "notOn"){
+    } else if(msg == "notOn"){
        shared->setOn(false);
-    } else if(msg->getContent() == "moving"){
+    } else if(msg == "moving"){
        shared->setMoving(true);
-    } else if(msg->getContent() == "notMoving"){
+    } else if(msg == "notMoving"){
        shared->setMoving(false);
-    } else if(msg->getContent().indexOf(prefix)>0){
-       String removedPrefix = msg->getContent().substring(prefix.length(), msg->getContent().length());
+    } else if(msg.indexOf(prefix)>0){
+       String removedPrefix = msg.substring(prefix.length(), msg.length());
        shared->setAttack(removedPrefix.toInt());
     }
-    delete msg;
+    delete message;
   }
 
 }

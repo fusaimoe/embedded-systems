@@ -105,7 +105,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if(targetDevice != null){
                     ((TextView) findViewById(R.id.btFoundFlagLabel)).setText(getString(R.string.btDeviceFound) + " " + targetDevice.getName());
-                    connectToTargetBtDevice();
+                    if(!BluetoothConnectionManager.getInstance().isAlive()) {
+                        connectToTargetBtDevice();
+                    }
                 }
             } else {
                 startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), C.ENABLE_BT_REQUEST);
@@ -121,9 +123,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(BluetoothConnectionManager.getInstance().isAlive()){
+        /*if(BluetoothConnectionManager.getInstance().isAlive()){
             BluetoothConnectionManager.getInstance().cancel();
-        }
+        }*/
         //todo : Should we deactivate the accelerometer here?
     }
 
@@ -487,12 +489,12 @@ public class MainActivity extends AppCompatActivity {
                 String message = obj.toString();
 
                 switch (message) {
-                    case C.ARDUINO_CONTACT:
-                        if(context.get().switchOn.isChecked()){
-                            context.get().contactWhileOn();
-                        }else {
-                            context.get().contactWhilePark();
-                        }
+                    case C.ARDUINO_CONTACT_ON:
+                        context.get().contactWhileOn();
+                        break;
+
+                    case C.ARDUINO_CONTACT_PARK:
+                        context.get().contactWhileOn();
                         break;
 
                     case C.ARDUINO_NOT_RISK:
@@ -502,6 +504,7 @@ public class MainActivity extends AppCompatActivity {
                     case C.ARDUINO_RISK:
                         context.get().showDistance(true);
                         break;
+
                     default:
                         if(message.contains(C.DISTANCE_PREFIX)) {
                             context.get().setDistance(message);

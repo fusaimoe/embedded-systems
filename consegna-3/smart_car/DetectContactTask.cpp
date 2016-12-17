@@ -9,20 +9,26 @@ DetectContactTask::DetectContactTask(SharedContext* shared, Button* button, Disp
 
 void DetectContactTask::init(int period) {
   Task::init(period);
-  state = OFF;
+  state = IDLE;
 }
 
 void DetectContactTask::tick() {
   switch (state) {
-    case OFF:
-      if (button->isPressed() && (shared->isStopped() || shared->isMoving())) {
-        shared->setContact(true);
-        display->showMsg("contact");
+    case IDLE:
+      if (button->isPressed() && shared->isOn()) {
         state = ON;
+      } else if(button->isPressed() &&  shared->isPark()) {
+        state = PARK;
       }
       break;
     case ON:
-      state = OFF;
+      display->showMsg("contactOn");
+      state = IDLE;
+      break;
+    case PARK:
+      shared->setContact(true);
+      display->showMsg("contactPark");
+      state = IDLE;
       break;
   }
 }

@@ -20,16 +20,18 @@ void DetectProximityTask::tick() {
   switch (state) {
     case OUT:
       if ( proximity->getDistance() < DMAX && shared->isMoving()) {
-        display->showMsg("proximity");
+        display->showMsg("risk");
         state = IN;
       }
       break;
     case IN:
+      display->showMsg("Distance:%f", proximity->getDistance());
       if (proximity->getDistance() < DMIN) {
         shared->setDanger(true);
         state = CLOSE;
       }
       if (proximity->getDistance() > DMAX) {
+        display->showMsg("notRisk");
         state = OUT;
       }
       break;

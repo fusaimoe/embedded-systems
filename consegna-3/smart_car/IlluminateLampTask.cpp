@@ -13,7 +13,7 @@ void IlluminateLampTask::init(int period) {
 void IlluminateLampTask::tick() {
   switch (state) {
     case OFF:
-      if (shared->isMoving()) {
+      if (shared->isMoving() || shared->isStopped()) {
         led->switchOn();
         state = ON;
       }

@@ -6,6 +6,5 @@ Display::Display(MsgService* msgService){
 }
 
 void Display::showMsg(const String& msg){
-  msgService->sendMsg("display:"+msg);
+  msgService->sendMsg(msg);
 }
-

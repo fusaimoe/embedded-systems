@@ -1,9 +1,9 @@
 #include "AttackTask.h"
 #include "Arduino.h"
 
-AttackTask::AttackTask(SharedContext* shared/*, Servo* servo*/) {
+AttackTask::AttackTask(SharedContext* shared, ServoImpl* servo) {
   this->shared = shared;
-  //this->servo = servo;
+  this->servo = servo;
 }
 
 void AttackTask::init(int period) {
@@ -19,7 +19,7 @@ void AttackTask::tick() {
       }
       break;
     case ON:
-      //servo->setValue(shared->getAttack());
+      servo->setValue(shared->getAttack());
       if (shared->getAttack() == 180) {
         state = FULL;
       }
@@ -27,7 +27,7 @@ void AttackTask::tick() {
     case FULL:
       shared->setContact(false);
       shared->setAttack(0);
-      //servo->resetValue();
+      servo->setValue(0);
       state = OFF;
       break;
   }

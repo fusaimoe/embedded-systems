@@ -13,7 +13,7 @@ class DetectContactTask: public Task {
     Button* button;
     Display* display;
     SharedContext* shared;
-    enum { OFF, ON } state;
+    enum { IDLE, ON, PARK } state;
 
   public:
 
