@@ -1,5 +1,5 @@
 /*
- Consegna 3 - Smart Car - Programmazione di Sistemi Embdedded
+ Consegna 3 - Smart Car - Programmazione di Sistemi Embedded
  Authors: Giulia Cecchetti, Andrea Colombo
 */
 
@@ -23,7 +23,7 @@
 #include "Led.h"
 #include "ProximitySensor.h"
 #include "Button.h"
-#include "ServoImpl.h"
+//#include "ServoImpl.h"
 
 Scheduler sched;
 
@@ -43,7 +43,7 @@ void setup(){
   ProximitySensor* proximity = new ProximitySensorImpl(UECHO, UTRIG);
   Button* button = new ButtonImpl(SWITCH);
   Display* display = new Display(msgService);
-  ServoImpl* servo = new ServoImpl(SERVO);
+  //ServoImpl* servo = new ServoImpl(SERVO);
 
   Task* t0 = new DetectCarTask(shared);
   t0->init(50);
@@ -65,7 +65,7 @@ void setup(){
   t4->init(100);
   sched.addTask(t4);
 
-  Task* t5 = new AttackTask(shared, servo);
+  Task* t5 = new AttackTask(shared/*, servo*/);
   t5->init(50);
   sched.addTask(t5);
 

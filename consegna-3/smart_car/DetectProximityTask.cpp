@@ -24,8 +24,14 @@ void DetectProximityTask::tick() {
         state = IN;
       }
       break;
-    case IN:
-      display->showMsg("Distance:%f", proximity->getDistance());
+    case IN: {
+      // Concatenate a float and a string in the message
+      float distance = proximity->getDistance();
+      String prefix = "Distance:";
+      char tmp[10];
+      dtostrf(distance,4,2,tmp);
+      display->showMsg(prefix + tmp);
+      
       if (proximity->getDistance() < DMIN) {
         shared->setDanger(true);
         state = CLOSE;
@@ -35,6 +41,7 @@ void DetectProximityTask::tick() {
         state = OUT;
       }
       break;
+    }
     case CLOSE:
       if (proximity->getDistance() > DMIN) {
         shared->setDanger(false);

@@ -28,7 +28,6 @@ void IlluminateWarningTask::tick() {
       break;
     case WAIT:
       counter++;
-      if (counter >= 4) { //numero da verificare
         led->switchOff();
         counter = 0;
         state = OFF;

@@ -1,4 +1,4 @@
-#ifndef __SERVOIMPL__
+/*#ifndef __SERVOIMPL__
 #define __SERVOIMPL__
 
 #include <Servo.h>
@@ -13,4 +13,4 @@ private:
     Servo myservo;
 };
 
-#endif
+#endif*/

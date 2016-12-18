@@ -9,13 +9,13 @@ class AttackTask: public Task {
 
   private:
 
-    ServoImpl* servo;
+    //ServoImpl* servo;
     SharedContext* shared;
     enum { OFF, ON, FULL } state;
 
   public:
 
-    AttackTask(SharedContext* shared, ServoImpl* servo);
+    AttackTask(SharedContext* shared/*, ServoImpl* servo*/);
     void init(int period);
     void tick();
 };
