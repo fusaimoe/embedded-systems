@@ -58,11 +58,10 @@ public class MainActivity extends AppCompatActivity {
     private AccelerometerListener accListener;
     private boolean sensorFlag;
 
-    private SharedPreferences preferences;
-
     private LocationManager lm;
-    private LocationListener locListener;
     private Location lastContactLocation;
+
+    private SharedPreferences preferences;
 
     private ToggleButton switchOn, switchPark;
     private TextView movingLabel, distanceLabel;
@@ -214,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
         switchOn = (ToggleButton) findViewById(R.id.onButton);
         switchPark = (ToggleButton) findViewById(R.id.parkButton);
         movingLabel = (TextView) findViewById(R.id.movingLabel);
-        distanceLabel = (TextView) findViewById(R.id.movingLabel);
+        distanceLabel = (TextView) findViewById(R.id.distanceLabel);
 
         switchOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -325,9 +324,11 @@ public class MainActivity extends AppCompatActivity {
             if (moving) {
                 BluetoothConnectionManager.getInstance().sendMsg(C.CAR_MOVING);
                 movingLabel.setText(R.string.carMoving);
+                switchOn.setEnabled(false);
             } else {
                 BluetoothConnectionManager.getInstance().sendMsg(C.CAR_NOT_MOVING);
                 movingLabel.setText(R.string.carNotMoving);
+                switchOn.setEnabled(true);
             }
         } catch (MsgTooBigException e) {
             e.printStackTrace();
@@ -371,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
      * Set distance label in case of danger
      */
     private void setDistance(String distance){
-        distanceLabel.setText(getString(R.string.distancePrefixLabel) +" "+ distance +" "+ getString(R.string.distanceSuffixLabel));
+        distanceLabel.setText(distance +" "+ getString(R.string.distanceSuffixLabel));
     }
 
     /**
@@ -494,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case C.ARDUINO_CONTACT_PARK:
-                        context.get().contactWhileOn();
+                        context.get().contactWhilePark();
                         break;
 
                     case C.ARDUINO_NOT_RISK:
@@ -530,8 +531,6 @@ public class MainActivity extends AppCompatActivity {
      * Accelerometer Listener
      */
     public  class  AccelerometerListener  implements SensorEventListener {
-        private  static  final  String  LOG_TAG = "app -tag";
-
         @Override
         public  void  onSensorChanged(SensorEvent event) {
             boolean otherFlag = false;
@@ -549,10 +548,9 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             sensorFlag = false;
-
                             setMoving(false);
                         }
-                    }, 10000);
+                    }, 5000);
                 }
             }
         }

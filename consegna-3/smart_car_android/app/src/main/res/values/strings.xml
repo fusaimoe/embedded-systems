@@ -25,6 +25,8 @@
     <string name="emailMessage">Your car suffered a contact while it was parked. Check where it happened on the app</string>
     <string name="emailDefaultAddress">Your email here</string>
     <string name="emailNotValid">Email not Valid</string>
+    <string name="emailChangesNotSaved">Settings changes not saved</string>
+    <string name="emailChangesSaved">Settings changes saved</string>
 
     <string name="userEmailPreference">com.fusaimoe.smart_car.userEmailPreference</string>
     <string name="userNotificationsPreference">com.fusaimoe.smart_car.userNotificationsPreference</string>

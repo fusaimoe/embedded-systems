@@ -55,7 +55,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     /**
-     * React to the user tapping the back icon in the action bar
+     * React to the user tapping an icon on the action bar
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -64,6 +64,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 Intent mainActivityIntent = new Intent(this, MainActivity.class);
                 this.startActivity(mainActivityIntent);
+                Toast.makeText(getApplicationContext(), R.string.emailChangesNotSaved, Toast.LENGTH_SHORT).show();
 
                 return true;
             case R.id.save:
@@ -78,6 +79,8 @@ public class SettingsActivity extends AppCompatActivity {
                     editor.commit();
 
                     this.onBackPressed();
+
+                    Toast.makeText(getApplicationContext(), R.string.emailChangesSaved, Toast.LENGTH_SHORT).show();
 
                     return true;
 
