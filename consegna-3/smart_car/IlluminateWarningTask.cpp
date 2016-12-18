@@ -28,6 +28,7 @@ void IlluminateWarningTask::tick() {
       break;
     case WAIT:
       counter++;
+      if (counter >= 8) { //8 corresponds to 2 seconds
         led->switchOff();
         counter = 0;
         state = OFF;
