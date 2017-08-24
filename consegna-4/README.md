@@ -24,7 +24,7 @@ Il sistema deve essere composto da:
 
 I sistemi S1 e S2 sono collegati via seriale (asincrona, UART), mentre i sistemi S2 e S3 comunicano via Bluetooth.
 
-Funzionalità del sistema
+<h4>Funzionalità del sistema</h4>
 
 Il sistema deve:
 
@@ -41,3 +41,5 @@ Il sistema deve:
 </ul>
 
 <hr>
+
+Per tutti gli aspetti non specificati, fare le scelte che si credono più opportune.
