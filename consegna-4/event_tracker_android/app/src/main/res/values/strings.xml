@@ -1,0 +1,15 @@
+<resources>
+
+    <string name="app_name">Event Tracker</string>
+
+    <string name="btDeviceFound">Target BT Device: Found</string>
+    <string name="btDeviceStatus">Target BT Status: </string>
+    <string name="btUnavailableAlertTitle">Warning</string>
+    <string name="btUnavailableAlertMessage">Bluetooth unavailable on this device</string>
+    <string name="btUnavailableAlertBtnText">Close APP</string>
+
+    <string name="timerAlertTitle">Attention</string>
+    <string name="timerAlertMessage">The little whale will get lost if you don\'t call her</string>
+    <string name="timerAlertButton">Call the whale</string>
+
+</resources>
