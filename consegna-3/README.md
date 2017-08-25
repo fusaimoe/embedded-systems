@@ -1,6 +1,6 @@
 # Consegna #3 - Smart Car
 
-* [Testo Consegna](https://github.com/fusaimoe/sistemi-embedded/wiki/Consegna-%233---Smart-Car)
+* [Testo Consegna](https://github.com/fusaimoe/sistemi-embedded/wiki/Consegna-%233---Car-Collision-Assistant)
 
 ## Note aggiuntive
 
