@@ -1,18 +1,21 @@
-Consegna 3 - Smart Car - Programmazione di Sistemi Embedded
-Authors: Giulia Cecchetti, Andrea Colombo
+# Consegna #3 - Smart Car
+
+* [Testo Consegna](https://github.com/fusaimoe/sistemi-embedded/wiki/Consegna-%233---Smart-Car)
+
+## Note aggiuntive
 
 Il progetto è stato sviluppato considerando che il veicolo possa trovarsi in quattro stati
 principali:
 
-- OFF: il veicolo è spento e il guidatore, ancora a bordo, può scegliere di entrare in
+* **OFF**: il veicolo è spento e il guidatore, ancora a bordo, può scegliere di entrare in
 modalità parcheggio o di riaccendere l’auto.
-- PARK: il veicolo viene parcheggiato e la macchina non può riaccendersi fino
+* **PARK**: il veicolo viene parcheggiato e la macchina non può riaccendersi fino
 all’uscita dalla modalità parcheggio, il bottone ON presente sull’applicazione android
 risulta perciò disabilitato.
-- ONSTOP: la macchina viene accesa ma non è ancora in movimento. Il bottone
+* **ONSTOP**: la macchina viene accesa ma non è ancora in movimento. Il bottone
 PARKING viene disabilitato, si presuppone infatti che l’auto debba spegnersi prima di
 poter entrare in modalità parcheggio.
-- ONMOVE: ad auto accesa l’accelerometro rileva un movimento del veicolo. In
+* **ONMOVE**: ad auto accesa l’accelerometro rileva un movimento del veicolo. In
 questo stato entrambi i bottoni dell’applicazione sono disabilitati, la macchina non
 può spegnersi o venir parcheggiata se si trova ancora in movimento.
 In fase progettuale abbiamo deciso, soprattutto per facilitare i test, che al rilevamento del
