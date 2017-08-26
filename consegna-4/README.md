@@ -9,13 +9,13 @@ First install Node.js and then JSON Server
 
 Then clone the repository
 
-      git clone https://github.com/fusaimoe/sistemi-embedded.git`
+      git clone https://github.com/fusaimoe/sistemi-embedded.git
     
 Move to the correct directory
 
-      cd ./sistemi-embedded/consegna-4/event_tracker_web`
+      cd ./sistemi-embedded/consegna-4/event_tracker_web
     
 And start JSON Server
 
-      json-server --watch db.json`
+      json-server --watch db.json
 
