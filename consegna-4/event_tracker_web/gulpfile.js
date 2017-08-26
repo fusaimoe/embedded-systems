@@ -2,8 +2,7 @@
 // https://css-tricks.com/gulp-for-beginners/
 
 // Options
-var distFolderName = "dist";
-var styleguideIsNeeded = false;
+var distFolderName = "public";
 
 var gulp = require('gulp');
 var sass = require('gulp-sass');

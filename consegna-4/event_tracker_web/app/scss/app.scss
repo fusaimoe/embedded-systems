@@ -7,7 +7,6 @@
 // ---------
 @import "variables/colors";
 @import "variables/typography";
-@import "variables/breakpoints";
 
 // Base
 // ---------
@@ -20,8 +19,7 @@
 
 // Components
 // ----------
-@import "components/navbar";
 @import "components/card";
 // Other components as necessary
 
-@import "utilities/utilities";
+//@import "utilities/utilities";

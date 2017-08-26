@@ -1,3 +1,5 @@
-.card {
-  
+$tableRowHeight: 48px;
+
+.mdl-card {
+  min-height: $tableRowHeight;
 }
