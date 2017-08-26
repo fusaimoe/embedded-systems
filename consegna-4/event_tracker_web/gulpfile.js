@@ -1,6 +1,10 @@
 // Built using the following guide
 // https://css-tricks.com/gulp-for-beginners/
 
+// Options
+var distFolderName = "dist";
+var styleguideIsNeeded = false;
+
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
@@ -52,7 +56,7 @@ gulp.task('useref', function(){
     .pipe(gulpIf('*.js', uglify()))
     // Minifies only if it's a CSS file
     .pipe(gulpIf('*.css', cssnano({})))
-    .pipe(gulp.dest('dist'))
+    .pipe(gulp.dest(distFolder))
 });
 
 gulp.task('images', function(){
@@ -61,16 +65,16 @@ gulp.task('images', function(){
   .pipe(cache(imagemin({
       interlaced: true
     })))
-  .pipe(gulp.dest('dist/images'))
+  .pipe(gulp.dest(distFolder+'/images'))
 });
 
 gulp.task('fonts', function() {
   return gulp.src('app/fonts/**/*')
-  .pipe(gulp.dest('dist/fonts'))
+  .pipe(gulp.dest(distFolder+'/fonts'))
 });
 
 gulp.task('clean:dist', function() {
-  return del.sync('dist');
+  return del.sync(distFolder);
 });
 
 gulp.task('cache:clear', function (callback) {
