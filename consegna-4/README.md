@@ -18,6 +18,16 @@ Move to the correct directory
 And start JSON Server
 
       json-server --watch db.json
+      
+## Java
+To compile the java project
+
+      sudo javac -classpath bin:/usr/share/java/RXTXcomm.jar:"/home/pi/Development/sistemi-embedded/consegna-4/event_tracker_raspberry/lib/*" -d bin src/*.java
+      
+To execute the java project
+
+      java -cp bin:/usr/share/java/RXTXcomm.jar:"/home/pi/Development/sistemi-embedded/consegna-4/event_tracker_raspberry/lib/*" Main args
+
 
 ## Schema
 ![](https://github.com/fusaimoe/sistemi-embedded/blob/master/consegna-4/messages-schema.png?raw=true)
