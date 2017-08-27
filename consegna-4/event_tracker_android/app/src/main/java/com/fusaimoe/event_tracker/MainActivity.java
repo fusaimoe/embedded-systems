@@ -232,6 +232,14 @@ public class MainActivity extends AppCompatActivity {
                 .setView(v)
                 .setTitle(R.string.timerAlertTitle)
                 .setMessage(R.string.timerAlertMessage)
+                .setNegativeButton(R.string.timerAlertDismiss, new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        whaleLost();
+                        deactivateAlarm(false);
+                        presenceDialog.dismiss();
+                    }
+                })
                 .setPositiveButton(R.string.timerAlertButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

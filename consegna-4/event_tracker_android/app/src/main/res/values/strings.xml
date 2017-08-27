@@ -11,5 +11,6 @@
     <string name="timerAlertTitle">Attention</string>
     <string name="timerAlertMessage">The little whale will get lost if you don\'t call her</string>
     <string name="timerAlertButton">Call the whale</string>
+    <string name="timerAlertDismiss">Let her go</string>
 
 </resources>
