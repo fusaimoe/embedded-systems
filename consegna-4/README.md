@@ -21,4 +21,6 @@ And start JSON Server
 
 ## Schema
 
+<div style="text-align:center">
 ![](https://github.com/fusaimoe/sistemi-embedded/blob/master/consegna-4/messages-schema.png?raw=true)
+</div>
