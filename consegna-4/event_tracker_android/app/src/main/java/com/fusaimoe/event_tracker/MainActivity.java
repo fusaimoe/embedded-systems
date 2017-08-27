@@ -14,14 +14,11 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.fusaimoe.event_tracker.bt.BluetoothConnectionManager;
@@ -172,15 +169,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Alert Arduino when the car is on or not
-     * @param deactivated
+     * Alert isAlarmSent when the car is on or not
+     * @param isAlarmSent
      */
-    private void deactivateAlarm(boolean deactivated) {
+    private void sendAlarm(boolean isAlarmSent) {
         try {
-            if(deactivated){
-                BluetoothConnectionManager.getInstance().sendMsg(C.ARDUINO_ALARM_ON);
+            if(isAlarmSent){
+                BluetoothConnectionManager.getInstance().sendMsg(C.ARDUINO_ALARM);
             }else{
-                BluetoothConnectionManager.getInstance().sendMsg(C.ARDUINO_ALARM_NOT_ON);
+                BluetoothConnectionManager.getInstance().sendMsg(C.ARDUINO_ALARM_NOT);
             }
         } catch (MsgTooBigException e) {
             e.printStackTrace();
@@ -228,6 +225,19 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = this.getLayoutInflater();
         View v = inflater.inflate(R.layout.alert_timer, null);
 
+        final CountDownTimer timer = new CountDownTimer(C.TIMER_VALUE, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                timerLabel.setText(Long.toString(millisUntilFinished / 1000));
+            }
+
+            public void onFinish() {
+                whaleLost();
+                sendAlarm(true);
+                presenceDialog.dismiss();
+            }
+        };
+
         presenceDialog = new AlertDialog.Builder(this)
                 .setView(v)
                 .setTitle(R.string.timerAlertTitle)
@@ -236,15 +246,16 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         whaleLost();
-                        deactivateAlarm(false);
+                        sendAlarm(true);
                         presenceDialog.dismiss();
                     }
                 })
                 .setPositiveButton(R.string.timerAlertButton, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        sendAlarm(false);
                         presenceDialog.dismiss();
-                        deactivateAlarm(true);
+                        timer.cancel();
                     }
                 })
                 .setCancelable(false)
@@ -253,19 +264,6 @@ public class MainActivity extends AppCompatActivity {
         timerLabel = (TextView)v.findViewById(R.id.timer_label);
 
         presenceDialog.show();
-
-        CountDownTimer timer = new CountDownTimer(C.TIMER_VALUE, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                timerLabel.setText(Long.toString(millisUntilFinished / 1000));
-            }
-
-            public void onFinish() {
-                whaleLost();
-                deactivateAlarm(false);
-                presenceDialog.dismiss();
-            }
-        };
 
         timer.start();
     }
@@ -285,10 +283,12 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             Object obj = msg.obj;
 
+            Log.i("MSG", obj.toString());
+
             if(obj instanceof String){
                 String message = obj.toString();
 
-                if (message==C.ARDUINO_PRESENCE){
+                if (message.equals(C.ARDUINO_PRESENCE)){
                     context.get().showPresenceAlert();
                 }
             }
