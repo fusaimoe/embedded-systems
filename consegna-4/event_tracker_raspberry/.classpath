@@ -10,5 +10,7 @@
 	<classpathentry kind="lib" path="lib/dio.jar"/>
 	<classpathentry kind="lib" path="lib/httpclient-4.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.4.6.jar"/>
+	<classpathentry kind="lib" path="lib/javax.json-api-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/gson-2.8.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
