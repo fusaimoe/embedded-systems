@@ -118,7 +118,6 @@ void EventHandlerManager::dispatchEvent(Event* ev){
 }
 
 void EventHandlerManager::mainEventLoop(){
-  while (1){
     bool isEmpty = true;
     while (isEmpty){
       cli();
@@ -137,7 +136,6 @@ void EventHandlerManager::mainEventLoop(){
     }    
     
     delete ev;
-  }
 }
 
 /* ------------------------ Global  ------------------------ */
