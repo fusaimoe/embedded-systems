@@ -6,7 +6,7 @@ La classe astratta component modella il; concetto di componente come entit� fi
 Per questo motivo contiene al suo interno un array di pin ed il tipo del componente. Le interfacce dei
 singoli componenti non estendono queta perch� si � voluto separare il concetto di componente fisico
 da quello funzionale*/
-enum class ComponentTypes {DEBUNCINGBUTTON, LED, SONAR, HC06, SERVO2, PIR};
+enum class ComponentTypes {DEBUNCINGBUTTON, LED, SONAR, HC06, SERVO2, PIR, BUZZER};
 
 //TODO deleter componen vector
 class Component
@@ -31,5 +31,3 @@ protected:
 
 
 #endif
-
-

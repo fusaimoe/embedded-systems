@@ -6,27 +6,26 @@
 #include "HC06.h"
 #include "Pir.h"
 #include "Led.h"
+#include "Buzzer.h"
 
-int buzzer = 12;         //buzzer connesso al pin 12
 
-MyHardwareSerial* hs;
+ComunicationDevice* hs;
 DHT11* tmp;
-HC06* hc;
+ComunicationDevice* hc;
 Pir* p;
 Light* l1;
 Light* l2;
-Light* l3;
+Buzzer* bz;
 void setup() {
-  
-  pinMode(buzzer,OUTPUT);
-  
+
+
   hs = MyHardwareSerial::getIstance(new StandardComunicationProtocol());
   tmp = new DHT11(7);
   hc = new HC06(2, 8);
   p = new Pir(3);
   l1 = new Led(9);
   l2 = new Led(10);
-  l3 = new Led(11);
+  bz = new Buzzer(12);
   addEventHandler(TIMER_EVENT, timerEventHandler);
   addEventHandler(SERIAL_EVENT, serialEventHandler);
   addEventHandler(BLUETOOTH_EVENT, bluetoothEventHandler);
@@ -56,32 +55,37 @@ void timerEventHandler(Event* ev) {
 }
 
 void serialEventHandler(Event* ev) {
-  //TODO metti serial is avaible su tutti gli interrupt seriali
-  l2->switchState();
-  Serial.println("serial recived");
-  InputMessages ms = ((SerialInputEvent*)ev)->getSource()->getMessage()->convertToStandardMsg();
-  switch (ms)
-  {
-  case InputMessages::STOP_ALARM:
-    tone(buzzer,0);
-    break;
-  default:
-    break;
+  ComunicationDevice* com = ((SerialInputEvent*)ev)->getSource();
+  if(com->isMsgAvailable()) {
+    l2->switchState();
+    InputMessages ms = com->getMessage()->convertToStandardMsg();
+    switch (ms)
+    {
+      case InputMessages::STOP_ALARM:
+        bz->switchOff();
+        break;
+      default:
+        break;
+    }
   }
 }
 
 void bluetoothEventHandler(Event* ev) {
-  InputMessages ms = hc->getMessage()->convertToStandardMsg();
-  switch (ms)
-  {
-  case InputMessages::ALARM:
-    tone(buzzer,1000);
-    break;
-   case InputMessages::PRESENCE:
-    hs->sendMsg(Msg("presence"));
-    break;
-  default:
-    break;
+  ComunicationDevice* com = ((BluetoothEvent*)ev)->getSource();
+  if(com->isMsgAvailable()) {
+    InputMessages ms = com->getMessage()->convertToStandardMsg();
+    switch (ms)
+    {
+      case InputMessages::ALARM:
+        hs->sendMessage(OutputMessages::ALARM);
+          bz->switchOn();
+        break;
+       case InputMessages::PRESENCE:
+        hs->sendMessage(OutputMessages::PRESENCE);
+        break;
+      default:
+        break;
+    }
   }
 }
 
