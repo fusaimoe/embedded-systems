@@ -4,7 +4,8 @@
  
 MySoftwareSerial::MySoftwareSerial(ComunicationProtocol* protocol, int rxpin, int txpin)
 {
-	ss = new SoftwareSerial(rxpin, txpin);
+	this->ss = new SoftwareSerial(rxpin, txpin);
+  this->ss->begin(9600);
 	this->protocol = protocol;
 }
 

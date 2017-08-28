@@ -7,6 +7,8 @@
 #include "Pir.h"
 #include "Led.h"
 
+int buzzer = 12;         //buzzer connesso al pin 12
+
 MyHardwareSerial* hs;
 DHT11* tmp;
 HC06* hc;
@@ -15,6 +17,9 @@ Light* l1;
 Light* l2;
 Light* l3;
 void setup() {
+  
+  pinMode(buzzer,OUTPUT);
+  
   hs = MyHardwareSerial::getIstance(new StandardComunicationProtocol());
   tmp = new DHT11(7);
   hc = new HC06(2, 8);
@@ -51,18 +56,35 @@ void timerEventHandler(Event* ev) {
 }
 
 void serialEventHandler(Event* ev) {
-
+  //TODO metti serial is avaible su tutti gli interrupt seriali
   l2->switchState();
-  Msg* m = ((SerialInputEvent*)ev)->getSource()->receiveMsg();
-  ((SerialInputEvent*)ev)->getSource()->sendMsg(Msg("ciao"));
+  Serial.println("serial recived");
+  InputMessages ms = ((SerialInputEvent*)ev)->getSource()->getMessage()->convertToStandardMsg();
+  switch (ms)
+  {
+  case InputMessages::STOP_ALARM:
+    tone(buzzer,0);
+    break;
+  default:
+    break;
+  }
 }
 
 void bluetoothEventHandler(Event* ev) {
-  Msg* m = hs->receiveMsg();
-  hs->sendMsg(Msg("ciao"));
+  InputMessages ms = hc->getMessage()->convertToStandardMsg();
+  switch (ms)
+  {
+  case InputMessages::ALARM:
+    tone(buzzer,1000);
+    break;
+   case InputMessages::PRESENCE:
+    hs->sendMsg(Msg("presence"));
+    break;
+  default:
+    break;
+  }
 }
 
 void pirEventHandler(Event* ev) {
-  Msg* m = hs->receiveMsg();
-  hs->sendMsg(Msg("pir"));
+  hc->sendMessage(OutputMessages::PRESENCE);
 }
