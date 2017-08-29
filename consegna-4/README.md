@@ -28,9 +28,13 @@ And build the project
 
       ant
       
-Then execute the main class
+Then locate the serial port to use
 
-      java -cp bin:/usr/share/java/RXTXcomm.jar:"/home/pi/Development/sistemi-embedded/consegna-4/event_tracker_raspberry/lib/*" Main args
+      java -cp bin:/usr/share/java/RXTXcomm.jar:"/home/pi/Development/sistemi-embedded/consegna-4/event_tracker_raspberry/lib/*" ShowSerialPorts
+      
+Then execute the main class using the serial port you just found as the argument
+
+      java -cp bin:/usr/share/java/RXTXcomm.jar:"/home/pi/Development/sistemi-embedded/consegna-4/event_tracker_raspberry/lib/*" Main "YOUR_SERIAL_PORT"
 
 
 ## Schema
