@@ -9,6 +9,8 @@ public class Main extends Thread {
 
 		SerialCommChannel channel = SerialCommChannel.getInstance(args[0], 9600);
 		
+		System.out.println("Waiting Arduino for rebooting...EEEEEEEEEEEEEEEEEEEEEEE");
+		
 		System.out.println("Waiting Arduino for rebooting...");
 		Thread.sleep(4000);
 		System.out.println("Ready.");
