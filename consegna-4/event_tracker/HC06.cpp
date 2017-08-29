@@ -54,7 +54,7 @@ void HC06::sendMessage(OutputMessages message)
 	switch (message)
 	{
 	case OutputMessages::PRESENCE:
-		this->channel->sendMsg(Msg("Presence"));
+		this->channel->sendMsg(Msg("presence"));
 		break;
 	default:
 		break;

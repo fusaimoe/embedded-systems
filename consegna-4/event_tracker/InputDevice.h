@@ -2,7 +2,7 @@
 #define __INPUTDEVICE__
 #include "SerialComunicationChannel.h"
 
-enum class InputMessages { ALARM, PRESENCE };
+enum class InputMessages { ALARM, PRESENCE, STOP_ALARM };
 
 class InputMsg {
 public:
@@ -42,11 +42,14 @@ InputMessages convertToStandardMsg()
 {
   //TODO trova modo di parse enum
   //Serial.println(msg);
-  if (msg == "ALARM") {
+  if (msg == "alarm") {
     return InputMessages::ALARM;
   }
-  else if (msg == "PRESENCE") {
+  else if (msg == "not_alarm") {
     return InputMessages::PRESENCE;
+  }
+  else if (msg == "stop_alarm") {
+    return InputMessages::STOP_ALARM;
   }
   return InputMessages(-1);
 }
