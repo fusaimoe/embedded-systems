@@ -19,7 +19,7 @@ public class SerialImpl implements com.fusaimoe.event_tracker.devices.Serial {
 	public SerialImpl(SerialCommChannel serial){
 		try {
 			auxWorker = new SerialCommAgent(serial);
-			System.out.println("SERIALIMPL");
+			System.out.println("Debug: SERIALIMPL");
 			auxWorker.start();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -63,6 +63,7 @@ public class SerialImpl implements com.fusaimoe.event_tracker.devices.Serial {
 		private final SerialCommChannel serial;
 		
 		public SerialCommAgent(SerialCommChannel serial){
+			System.out.println("Debug: thread SERIALCOMM");
 			this.serial = serial;
 		}
 		
