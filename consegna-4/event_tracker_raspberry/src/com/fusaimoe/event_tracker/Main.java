@@ -16,6 +16,8 @@ public class Main extends Thread {
 		Light led = new com.fusaimoe.event_tracker.devices.p4j_impl.Led(4);
 		Serial serial = new SerialImpl(channel);
 		
+		System.out.println("Debug: Serial Main");
+		
 		EventTracker blinker = new EventTracker(led);
 		InputMsgReceiver rec = new InputMsgReceiver(blinker,serial);
 		blinker.start();
