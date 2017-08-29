@@ -20,11 +20,15 @@ And start JSON Server
       json-server --watch db.json
       
 ## Java
-To compile the java project
+Move to the correct directory
 
-      sudo javac -classpath bin:/usr/share/java/RXTXcomm.jar:"/home/pi/Development/sistemi-embedded/consegna-4/event_tracker_raspberry/lib/*" -d bin src/*.java
+      cd ./sistemi-embedded/consegna-4/event_tracker_raspberry
       
-To execute the java project
+And build the project
+
+      ant
+      
+Then execute the main class
 
       java -cp bin:/usr/share/java/RXTXcomm.jar:"/home/pi/Development/sistemi-embedded/consegna-4/event_tracker_raspberry/lib/*" Main args
 
