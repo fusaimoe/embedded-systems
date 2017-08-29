@@ -1,12 +1,13 @@
+package com.fusaimoe.event_tracker;
 
-public class Message {
+public class ArduinoMessage {
 
 	String time;
 	Float temperature;
 	boolean presence;
 	boolean alarm;
 	
-	public Message(String time, Float temperature, boolean presence, boolean alarm) {
+	public ArduinoMessage(String time, Float temperature, boolean presence, boolean alarm) {
 		super();
 		this.time = time;
 		this.temperature = temperature;
