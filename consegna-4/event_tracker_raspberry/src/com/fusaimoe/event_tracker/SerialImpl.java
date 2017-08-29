@@ -19,6 +19,7 @@ public class SerialImpl implements com.fusaimoe.event_tracker.devices.Serial {
 	public SerialImpl(SerialCommChannel serial){
 		try {
 			auxWorker = new SerialCommAgent(serial);
+			System.out.println("SERIALIMPL");
 			auxWorker.start();
 		} catch (Exception e) {
 			e.printStackTrace();
