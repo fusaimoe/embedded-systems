@@ -1,3 +1,4 @@
+package com.fusaimoe.event_tracker;
 
 
 import gnu.io.CommPortIdentifier;
@@ -106,6 +107,7 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
 		}
 		return channel;
 	}
+	
 
 
 }

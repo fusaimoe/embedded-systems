@@ -1,3 +1,4 @@
+package com.fusaimoe.event_tracker;
 
 
 import gnu.io.CommPortIdentifier;
