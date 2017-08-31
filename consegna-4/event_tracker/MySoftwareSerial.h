@@ -1,3 +1,5 @@
+
+
 #ifndef __MYSOFTWARESERIAL__
 #define __MYSOFTWARESERIAL__
 #include "./SerialComunicationChannel.h"

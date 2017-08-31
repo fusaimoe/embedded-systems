@@ -6,34 +6,26 @@
 #include "HC06.h"
 #include "Pir.h"
 #include "Led.h"
-#include "Buzzer.h"
+//#include "Buzzer.h"
 
 
 ComunicationDevice* hs;
 DHT11* tmp;
 ComunicationDevice* hc;
 Pir* p;
-Light* l1;
-Light* l2;
-Buzzer* bz;
+//Buzzer* bz;
 void setup() {
-
-
   hs = MyHardwareSerial::getIstance(new StandardComunicationProtocol());
   tmp = new DHT11(7);
-  hc = new HC06(2, 8);
+  hc = new HC06(2, 9);
   p = new Pir(3);
-  l1 = new Led(9);
-  l2 = new Led(10);
-  bz = new Buzzer(12);
+  //bz = new Buzzer(12);
   addEventHandler(TIMER_EVENT, timerEventHandler);
   addEventHandler(SERIAL_EVENT, serialEventHandler);
   addEventHandler(BLUETOOTH_EVENT, bluetoothEventHandler);
   addEventHandler(PIR_EVENT, pirEventHandler);
   FlexiTimer2::set(10000, timerEvent);
   FlexiTimer2::start();
-  l1->switchOn();
-  l2->switchOn();
 }
 
 void loop() {
@@ -57,12 +49,11 @@ void timerEventHandler(Event* ev) {
 void serialEventHandler(Event* ev) {
   ComunicationDevice* com = ((SerialInputEvent*)ev)->getSource();
   if(com->isMsgAvailable()) {
-    l2->switchState();
     InputMessages ms = com->getMessage()->convertToStandardMsg();
     switch (ms)
     {
       case InputMessages::STOP_ALARM:
-        bz->switchOff();
+        //bz->switchOff();
         break;
       default:
         break;
@@ -78,7 +69,7 @@ void bluetoothEventHandler(Event* ev) {
     {
       case InputMessages::ALARM:
         hs->sendMessage(OutputMessages::ALARM);
-          bz->switchOn();
+          //bz->switchOn();
         break;
        case InputMessages::PRESENCE:
         hs->sendMessage(OutputMessages::PRESENCE);

@@ -55,13 +55,26 @@ void MyHardwareSerial::write(const char * message, int lenght)
 
 void MyHardwareSerial::sendMessage(OutputMessages message)
 {
+  StaticJsonBuffer<200> jsonBuffer;
+  char buffer[200];
+  JsonObject& root = jsonBuffer.createObject();
 	switch (message)
 	{
 	case OutputMessages::PRESENCE:
-		this->sendMsg(Msg("Crash"));
+        root["temperature"] = NULL;
+        root["time"] = NULL;
+        root["presence"] = true;
+        root["alarm"] = NULL;
+        root.printTo(buffer, sizeof(buffer));
+        this->sendMsg(Msg(String(buffer)));
 		break;
 	case OutputMessages::ALARM:
-		this->sendMsg(Msg("Away"));
+       root["temperature"] = NULL;
+        root["time"] = NULL;
+        root["presence"] = NULL;
+        root["alarm"] = true;
+        root.printTo(buffer, sizeof(buffer));
+        this->sendMsg(Msg(String(buffer)));
 		break;
 	default:
 		break;
@@ -73,8 +86,8 @@ void MyHardwareSerial::sendMessage(OutputMessages message, float value)
   
   StaticJsonBuffer<200> jsonBuffer;
   char buffer[200];
-
   JsonObject& root = jsonBuffer.createObject();
+  
 	switch (message)
 	{
 		case OutputMessages::TEMPERATURE:

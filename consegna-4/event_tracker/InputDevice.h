@@ -42,10 +42,10 @@ InputMessages convertToStandardMsg()
 {
   //TODO trova modo di parse enum
   //Serial.println(msg);
-  if (msg == "alarm") {
+  if (msg == "a") {
     return InputMessages::ALARM;
   }
-  else if (msg == "not_alarm") {
+  else if (msg == "n") {
     return InputMessages::PRESENCE;
   }
   else if (msg == "stop_alarm") {

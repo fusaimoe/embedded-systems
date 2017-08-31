@@ -39,6 +39,9 @@ Msg * HC06ComunicationProtocol::receiveDecodedMessage(SerialComunicationChannel 
 				nDataRec++;
 			}
 		}
+   while(serialChannel->isMsgAvailable()) {
+    serialChannel->read();
+   }
 		return new Msg(content);
 	}
 	else {

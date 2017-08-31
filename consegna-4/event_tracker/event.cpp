@@ -119,23 +119,23 @@ void EventHandlerManager::dispatchEvent(Event* ev){
 
 void EventHandlerManager::mainEventLoop(){
     bool isEmpty = true;
-    while (isEmpty){
-      cli();
-      isEmpty = eventQueue.isEmpty();
-      sei();
-    }
     cli();
-    Event* ev = eventQueue.dequeue();
+    isEmpty = eventQueue.isEmpty();
     sei();
-
-    // dispatch event 
-    for (int i = 0; i < nEventHandlers; i++){
-      if (eventHandlers[i]->isTriggered(ev)){
-        eventHandlers[i]->exec(ev);
-      }
-    }    
-    
-    delete ev;
+    if(!isEmpty) {
+      cli();
+      Event* ev = eventQueue.dequeue();
+      sei();
+  
+      // dispatch event 
+      for (int i = 0; i < nEventHandlers; i++){
+        if (eventHandlers[i]->isTriggered(ev)){
+          eventHandlers[i]->exec(ev);
+        }
+      }    
+      
+      delete ev;
+    }
 }
 
 /* ------------------------ Global  ------------------------ */
