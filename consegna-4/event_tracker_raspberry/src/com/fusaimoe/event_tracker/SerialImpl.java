@@ -71,9 +71,11 @@ public class SerialImpl implements com.fusaimoe.event_tracker.devices.Serial {
 			System.out.println("[Serial Comm Agent] running.");
 			while (true){
 				if(serial.isMsgAvailable()) {
+					
 					String msg;
 					try {
 						msg = serial.receiveMsg();
+						System.out.println(msg);
 						setMsg(msg);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
