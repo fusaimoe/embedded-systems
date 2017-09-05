@@ -15,16 +15,26 @@ public class EventTracker extends BasicEventLoopController {
 	
 	private final Light led;
 	private final ObservableTimer timer;
+	private final ObservableButton button;
 	private final JSONServer server;
+	private final Serial serial;
 	
 	private enum State {ALARM, IDLE};
 	private State currentState;
 
-	public EventTracker(Light led){
+	public EventTracker(Serial serial, Light led, ObservableButton button){
+		
+		this.serial=serial;
 		this.led = led;
-		this.timer = new ObservableTimer();
+		
 		this.server = new JSONServer();
+		
+		this.timer = new ObservableTimer();
 		timer.addObserver(this);
+		
+		this.button = button;
+		button.addObserver(this);
+		
 		currentState = State.IDLE;
 	}
 	
@@ -32,13 +42,11 @@ public class EventTracker extends BasicEventLoopController {
 		switch (currentState){
 		case IDLE:
 			try {
-				if (ev instanceof MessageEvent) {
-					System.out.println("FUNZIONAAAAAAAAAAAAAAAAAAAAAAAAAA");
-				}
 				if (ev instanceof AlarmEvent){
 					sendMessage(((MessageEvent)ev));
 					led.switchOn();
 					this.currentState = State.ALARM;
+					System.out.println("ALARM");
 				} else if (ev instanceof InformationEvent){
 					sendMessage(((MessageEvent)ev));
 				}
@@ -51,10 +59,12 @@ public class EventTracker extends BasicEventLoopController {
 				if (ev instanceof InformationEvent){
 					sendMessage(((MessageEvent)ev));
 					led.switchOff();
-				} else if (ev instanceof Object){
+				} else if (ev instanceof ButtonPressed){
 					led.switchOff();
 					currentState = State.IDLE;
-					timer.stop();					
+					timer.stop();
+					serial.sendMsg("s");
+					System.out.println("STOP");
 				}
 			} catch (IOException ex){
 				ex.printStackTrace();

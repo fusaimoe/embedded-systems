@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="rxtx-2.2-dist/mfz-rxtx-2.2-20081207-win-x64/RXTXcomm.jar"/>
 	<classpathentry kind="lib" path="lib/p4j/pi4j-core.jar"/>
 	<classpathentry kind="lib" path="lib/p4j/pi4j-device.jar"/>
 	<classpathentry kind="lib" path="lib/p4j/pi4j-gpio-extension.jar"/>
@@ -11,5 +10,7 @@
 	<classpathentry kind="lib" path="lib/httpclient-4.5.3.jar"/>
 	<classpathentry kind="lib" path="lib/httpcore-4.4.6.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.8.1.jar"/>
+	<classpathentry kind="lib" path="rxtx-2.2-dist/RXTXcomm.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -80,5 +80,5 @@ void setup(){
 
 
 void loop(){
-  sched.schedule();
+  MsgService.sendMsg("SI PREGA DI USCIRE, TOILETTE IN FASE DI AUTO-PULIZIA");
 };

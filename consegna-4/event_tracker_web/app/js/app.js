@@ -6,14 +6,8 @@ function printData(request){
   tableBody.empty();
 
   $.getJSON(url + request, function (data) {
-    $.each( data, function( key, val ) {
-      var items = "<tr>";
-      $.each( this, function( key, val ) {
-        items += "<td class='mdl-data-table__cell--non-numeric'>" + val + "</td>";
-      });
-      items += "</tr>";
-      $(tableBody).append( items );
-    });
+    console.log(data);
+    $("#table-body").loadTemplate("rowTemplate.html", data);
   });
 }
 
