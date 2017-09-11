@@ -25,13 +25,13 @@ public class Led implements Light {
 	@Override
 	public synchronized void switchOn() throws IOException {
 		pin.high();		
-		// System.out.println("LIGHT ON - pin "+pin);
+		//System.out.println("LIGHT ON - pin "+pin);
 	}
 
 	@Override
 	public synchronized void switchOff() throws IOException {
 		pin.low();
-		// System.out.println("LIGHT OFF - pin "+pin);		
+		//System.out.println("LIGHT OFF - pin "+pin);		
 	}
 	
 }

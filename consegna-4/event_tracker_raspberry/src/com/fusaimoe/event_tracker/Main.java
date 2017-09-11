@@ -1,7 +1,8 @@
 package com.fusaimoe.event_tracker;
 
-import com.fusaimoe.event_tracker.devices.*;
+import java.io.IOException;
 
+import com.fusaimoe.event_tracker.devices.*;
 public class Main extends Thread {
 	
 	public static void main(String[] args) throws Exception {
@@ -12,16 +13,19 @@ public class Main extends Thread {
 		Thread.sleep(4000);
 		System.out.println("Ready.");
 		
-		Light led = new com.fusaimoe.event_tracker.devices.p4j_impl.Led(17);
-		ObservableButton button = new com.fusaimoe.event_tracker.devices.p4j_impl.Button(4);
+		Light l1 = new com.fusaimoe.event_tracker.devices.p4j_impl.Led(1);
+		Light l2 = new com.fusaimoe.event_tracker.devices.p4j_impl.Led(4);
+		Light l3 = new com.fusaimoe.event_tracker.devices.p4j_impl.Led(3);
+		ObservableButton button = new com.fusaimoe.event_tracker.devices.p4j_impl.Button(0);
 		
 		Serial serial = new SerialImpl(channel);
 		
-		EventTracker blinker = new EventTracker(serial, led, button);
-		InputMsgReceiver rec = new InputMsgReceiver(blinker,serial);
-		blinker.start();
+		EventTracker ev = new EventTracker(serial, l1, l3, button);
+		
+		BlinkerManager.buildInstance(l2);
+		InputMsgReceiver rec = new InputMsgReceiver(ev,serial);
+		ev.start();
 		rec.start();
-
 		
 	}
 }

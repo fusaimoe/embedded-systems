@@ -15,8 +15,10 @@ public class SerialImpl implements com.fusaimoe.event_tracker.devices.Serial {
 	private boolean isMsgAvailable;
 	private String msg;
 	private SerialCommAgent auxWorker;
+	private final SerialCommChannel serial;
 	
 	public SerialImpl(SerialCommChannel serial){
+		this.serial = serial;
 		try {
 			auxWorker = new SerialCommAgent(serial);
 			System.out.println("Debug: SERIALIMPL");
@@ -39,7 +41,7 @@ public class SerialImpl implements com.fusaimoe.event_tracker.devices.Serial {
 	}
 	
 	public synchronized void sendMsg(String msg){
-		System.out.println(msg);
+		serial.sendMsg(msg);
 	}
 	
 	synchronized void setMsg(String msg){

@@ -13,8 +13,8 @@ import com.fusaimoe.event_tracker.devices.*;
 
 public class EventTracker extends BasicEventLoopController {
 	
-	private final Light led;
-	private final ObservableTimer timer;
+	private final Light l1;
+	private final Light l3;
 	private final ObservableButton button;
 	private final JSONServer server;
 	private final Serial serial;
@@ -22,15 +22,13 @@ public class EventTracker extends BasicEventLoopController {
 	private enum State {ALARM, IDLE};
 	private State currentState;
 
-	public EventTracker(Serial serial, Light led, ObservableButton button){
+	public EventTracker(Serial serial, Light l1, Light l3, ObservableButton button){
 		
 		this.serial=serial;
-		this.led = led;
+		this.l1 = l1;
+		this.l3 = l3;
 		
 		this.server = new JSONServer();
-		
-		this.timer = new ObservableTimer();
-		timer.addObserver(this);
 		
 		this.button = button;
 		button.addObserver(this);
@@ -44,13 +42,13 @@ public class EventTracker extends BasicEventLoopController {
 			try {
 				if (ev instanceof AlarmEvent){
 					sendMessage(((MessageEvent)ev));
-					led.switchOn();
 					this.currentState = State.ALARM;
+					l3.switchOn();
 					System.out.println("ALARM");
 				} else if (ev instanceof InformationEvent){
 					sendMessage(((MessageEvent)ev));
 				}
-			} catch (IOException ex){
+			} catch (Exception ex){
 				ex.printStackTrace();
 			}
 			break;
@@ -58,15 +56,13 @@ public class EventTracker extends BasicEventLoopController {
 			try {
 				if (ev instanceof InformationEvent){
 					sendMessage(((MessageEvent)ev));
-					led.switchOff();
 				} else if (ev instanceof ButtonPressed){
-					led.switchOff();
 					currentState = State.IDLE;
-					timer.stop();
 					serial.sendMsg("s");
-					System.out.println("STOP");
+					l3.switchOff();
+					System.out.println("STOP ALARM");
 				}
-			} catch (IOException ex){
+			} catch (Exception ex){
 				ex.printStackTrace();
 			}
 			break;
@@ -76,6 +72,17 @@ public class EventTracker extends BasicEventLoopController {
 	private void sendMessage(MessageEvent msgEv) {
 		ArduinoMessage msg = msgEv.getMessage();
 		this.server.post(msg);
+	}
+	
+	@Override
+	public synchronized void start() {
+		super.start();
+		try {
+			l1.switchOn();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private LottieAnimationView whale;
     private View circle;
     private boolean lost=false;
+    private static boolean dialogIsOpen = false;
 
     private static MainActivityHandler uiHandler;
 
@@ -237,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
                 whaleLost();
                 sendAlarm(true);
                 presenceDialog.dismiss();
+                dialogIsOpen=false;
             }
         };
 
@@ -249,7 +251,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         whaleLost();
                         sendAlarm(true);
+                        timer.cancel();
                         presenceDialog.dismiss();
+                        dialogIsOpen=false;
                     }
                 })
                 .setPositiveButton(R.string.timerAlertButton, new DialogInterface.OnClickListener() {
@@ -258,6 +262,7 @@ public class MainActivity extends AppCompatActivity {
                         sendAlarm(false);
                         presenceDialog.dismiss();
                         timer.cancel();
+                        dialogIsOpen=false;
                     }
                 })
                 .setCancelable(false)
@@ -291,7 +296,10 @@ public class MainActivity extends AppCompatActivity {
                 String message = obj.toString();
 
                 if (message.equals(C.ARDUINO_PRESENCE)){
-                    context.get().showPresenceAlert();
+                    if (!dialogIsOpen) {
+                        context.get().showPresenceAlert();
+                        dialogIsOpen = true;
+                    }
                 }
             }
 
