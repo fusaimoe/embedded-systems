@@ -5,8 +5,6 @@
 #include "MovementSensor.h"
 #include "event.h"
 
-#define PIR_EVENT 5
-
 class Pir : public Component, public MovementSensor {
 public:
 	Pir(int pin);
@@ -15,7 +13,7 @@ public:
 
 class PirEvent: public Event {
 public:
-  PirEvent(Pir* source) : Event(PIR_EVENT){
+  PirEvent(Pir* source) : Event(EventType::PIR_EVENT){
     this->source = source;
   }
 

@@ -1,32 +1,31 @@
 #ifndef __EVENT__
 #define __EVENT__
 
-
-#define TIMER_EVENT 1
+enum class EventType {TIMER_EVENT, ALARM_EVENT, PRESENCE_EVENT, STOP_ALARM_EVENT, PIR_EVENT};
 
 class Event {
 public:
-  Event(int type);
-  int getType();
+  Event(EventType type);
+  EventType getType();
 private:
-  int type;
+  EventType type;
 };
 
 class TimerClock: public Event {
 public:
-  TimerClock(int source) : Event(TIMER_EVENT){
+  TimerClock(void* source) : Event(EventType::TIMER_EVENT){
     this->source = source;
   }
 
-  int getSource(){
+  void* getSource(){
     return source;
   }
 private:
-  int source;
+  void* source;
 };
 
 /* register a new event handler reacting to events of some type */
-bool addEventHandler(int eventType, void (*proc)(Event* ev));
+bool addEventHandler(EventType eventType, void (*proc)(Event* ev));
 void dispatchEvent(Event* ev);
 void mainEventLoop();
 

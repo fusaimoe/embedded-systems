@@ -1,6 +1,6 @@
 #include "MyHardwareSerial.h"
 
-#include <ArduinoJson.h>
+//#include <ArduinoJson.h>
 
 MyHardwareSerial* MyHardwareSerial::istance = NULL;
 
@@ -55,26 +55,13 @@ void MyHardwareSerial::write(const char * message, int lenght)
 
 void MyHardwareSerial::sendMessage(OutputMessages message)
 {
-  StaticJsonBuffer<200> jsonBuffer;
-  char buffer[200];
-  JsonObject& root = jsonBuffer.createObject();
 	switch (message)
 	{
 	case OutputMessages::PRESENCE:
-        root["temperature"] = NULL;
-        root["time"] = NULL;
-        root["presence"] = true;
-        root["alarm"] = NULL;
-        root.printTo(buffer, sizeof(buffer));
-        this->sendMsg(Msg(String(buffer)));
+        this->sendMsg(Msg("p"));
 		break;
 	case OutputMessages::ALARM:
-       root["temperature"] = NULL;
-        root["time"] = NULL;
-        root["presence"] = NULL;
-        root["alarm"] = true;
-        root.printTo(buffer, sizeof(buffer));
-        this->sendMsg(Msg(String(buffer)));
+        this->sendMsg(Msg("a"));
 		break;
 	default:
 		break;
@@ -84,19 +71,10 @@ void MyHardwareSerial::sendMessage(OutputMessages message)
 void MyHardwareSerial::sendMessage(OutputMessages message, float value)
 {
   
-  StaticJsonBuffer<200> jsonBuffer;
-  char buffer[200];
-  JsonObject& root = jsonBuffer.createObject();
-  
 	switch (message)
 	{
 		case OutputMessages::TEMPERATURE:
-				root["temperature"] = value;
-				root["time"] = NULL;
-				root["presence"] = NULL;
-				root["alarm"] = NULL;
-				root.printTo(buffer, sizeof(buffer));
-				this->sendMsg(Msg(String(buffer)));
+        this->sendMsg(Msg(String(value)));
 			break;
 		default:
 			break;

@@ -34,11 +34,11 @@ private:
 
 class EventHandler {
 public:
-  EventHandler(int type, void (*proc)(Event* ev));
+  EventHandler(EventType type, void (*proc)(Event* ev));
   bool isTriggered(Event* ev);
   bool exec(Event* ev);
 private:
-  int type;
+  EventType type;
   void (*proc)(Event* ev);
 };
 
@@ -46,7 +46,7 @@ class EventHandlerManager {
 
   public:
   static EventHandlerManager* getInstance();  
-  bool addEventHandler(int event, void (*proc)(Event* ev));  
+  bool addEventHandler(EventType event, void (*proc)(Event* ev));  
   void dispatchEvent(Event* ev);
   void mainEventLoop();  
 
@@ -63,18 +63,18 @@ private:
 
 /* ------------------------ Event  ------------------------ */
 
-Event::Event(int type){
+Event::Event(EventType type){
   this->type = type;
 } 
   
-int Event::getType(){
+EventType Event::getType(){
   return type;  
 }
   
   
 /* ------------------------ Event Handlers  ------------------------ */
 
-EventHandler::EventHandler(int type, void (*proc)(Event* ev)){
+EventHandler::EventHandler(EventType type, void (*proc)(Event* ev)){
   this->type = type;
   this->proc = proc;
 }
@@ -103,7 +103,7 @@ EventHandlerManager::EventHandlerManager(){
   nEventHandlers = 0;  
 }
   
-bool EventHandlerManager::addEventHandler(int event, void (*proc)(Event* ev)){
+bool EventHandlerManager::addEventHandler(EventType event, void (*proc)(Event* ev)){
   if (nEventHandlers < MAX_HANDLERS){
     eventHandlers[nEventHandlers] = new EventHandler(event, proc);
     nEventHandlers++;
@@ -136,11 +136,31 @@ void EventHandlerManager::mainEventLoop(){
       
       delete ev;
     }
+   /*while (1){
+    bool isEmpty = true;
+    cli();
+    isEmpty = eventQueue.isEmpty();
+    sei();
+    if(!isEmpty) {
+      cli();
+      Event* ev = eventQueue.dequeue();
+      sei();
+  
+      // dispatch event 
+      for (int i = 0; i < nEventHandlers; i++){
+        if (eventHandlers[i]->isTriggered(ev)){
+          eventHandlers[i]->exec(ev);
+        }
+      }    
+      
+      delete ev;
+    }
+  }*/
 }
 
 /* ------------------------ Global  ------------------------ */
 
-bool addEventHandler(int event, void (*proc)(Event* ev)){
+bool addEventHandler(EventType event, void (*proc)(Event* ev)){
   return EventHandlerManager::getInstance()->addEventHandler(event, proc);
 }  
 

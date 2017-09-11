@@ -14,13 +14,13 @@ float DHT11::getTemperature()
       return DHT.temperature;
     break;
     case DHTLIB_ERROR_CHECKSUM:
-      return NULL;
+      return -1;
     break;
     case DHTLIB_ERROR_TIMEOUT:
-      return NULL;
+      return -1;
     break;
     default:
-      return NULL;
+      return -1;
     break;
   }
 }

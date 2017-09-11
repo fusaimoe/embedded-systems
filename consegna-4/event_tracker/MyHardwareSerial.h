@@ -19,7 +19,6 @@ public:
 	void sendMessage(OutputMessages message);
 	void sendMessage(OutputMessages message, float value);
 private:
-
 	MyHardwareSerial(ComunicationProtocol* protocol);
 	ComunicationProtocol* protocol;
 	static MyHardwareSerial* istance;

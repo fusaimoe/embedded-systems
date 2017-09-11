@@ -48,7 +48,7 @@ InputMessages convertToStandardMsg()
   else if (msg == "n") {
     return InputMessages::PRESENCE;
   }
-  else if (msg == "stop_alarm") {
+  else if (msg == "s") {
     return InputMessages::STOP_ALARM;
   }
   return InputMessages(-1);

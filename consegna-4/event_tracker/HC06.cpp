@@ -6,24 +6,6 @@
 
 #include "./StandardComunicationProtocol.h"
 
-
-HC06* interHC;
-
-void notifyHC() {
-  Event* ev = new BluetoothEvent(interHC);
-  dispatchEvent(ev);
-}
-
-void registerNewSS(int pin, HC06* pir){
-  switch (pin){
-    case 2: interHC = pir;
-            attachInterrupt(0, notifyHC, RISING);
-            break;
-  }
-}
-
-
-
 HC06::HC06(int rxPin, int txPin) : Component(new int[2]{ rxPin, txPin }, ComponentTypes::HC06)
 {
 	ComunicationProtocol* protocol = new HC06ComunicationProtocol(255);
@@ -35,7 +17,6 @@ HC06::HC06(int rxPin, int txPin) : Component(new int[2]{ rxPin, txPin }, Compone
 		this->channel = new MySoftwareSerial(protocol, rxPin, txPin);
 	}
 	while (!Serial) {}
-  registerNewSS(rxPin, this);
 	//Serial.println("Ready to Go");
 }
 
