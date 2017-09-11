@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog presenceDialog;
     private TextView timerLabel;
 
+    private CountDownTimer timer;
+
     private LottieAnimationView whale;
     private View circle;
     private boolean lost=false;
@@ -225,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = this.getLayoutInflater();
         View v = inflater.inflate(R.layout.alert_timer, null);
 
-        final CountDownTimer timer = new CountDownTimer(C.TIMER_VALUE, 1000) {
+        timer = new CountDownTimer(C.TIMER_VALUE, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 timerLabel.setText(Long.toString(millisUntilFinished / 1000));
