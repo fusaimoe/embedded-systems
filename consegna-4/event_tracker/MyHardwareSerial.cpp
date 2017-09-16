@@ -1,6 +1,5 @@
 #include "MyHardwareSerial.h"
 
-//#include <ArduinoJson.h>
 
 MyHardwareSerial* MyHardwareSerial::istance = NULL;
 

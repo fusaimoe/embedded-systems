@@ -8,7 +8,6 @@ singoli componenti non estendono queta perch� si � voluto separare il concet
 da quello funzionale*/
 enum class ComponentTypes {DEBUNCINGBUTTON, LED, SONAR, HC06, SERVO2, PIR, BUZZER};
 
-//TODO deleter componen vector
 class Component
 {
 
