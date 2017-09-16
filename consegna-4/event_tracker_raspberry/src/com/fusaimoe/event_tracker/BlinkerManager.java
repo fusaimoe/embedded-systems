@@ -1,7 +1,5 @@
 package com.fusaimoe.event_tracker;
 
-import java.io.IOException;
-
 import com.fusaimoe.event_tracker.devices.Light;
 
 public class BlinkerManager {
@@ -43,14 +41,12 @@ public class BlinkerManager {
 		
 		@Override
 		public synchronized void start() {
-			// TODO Auto-generated method stub
 			super.start();
 			running = true;
 		}
 		
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			super.run();
 			int i = 0;
 			while(running) {
@@ -63,7 +59,6 @@ public class BlinkerManager {
 					
 					Thread.sleep(100);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				

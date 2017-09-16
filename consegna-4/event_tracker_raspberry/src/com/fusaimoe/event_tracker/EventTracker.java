@@ -2,12 +2,6 @@ package com.fusaimoe.event_tracker;
 
 import java.io.IOException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-
 import com.fusaimoe.event_tracker.common.*;
 import com.fusaimoe.event_tracker.devices.*;
 
@@ -15,7 +9,6 @@ public class EventTracker extends BasicEventLoopController {
 	
 	private final Light l1;
 	private final Light l3;
-	private final ObservableButton button;
 	private final JSONServer server;
 	private final Serial serial;
 	
@@ -30,7 +23,6 @@ public class EventTracker extends BasicEventLoopController {
 		
 		this.server = new JSONServer();
 		
-		this.button = button;
 		button.addObserver(this);
 		
 		currentState = State.IDLE;
@@ -41,12 +33,12 @@ public class EventTracker extends BasicEventLoopController {
 		case IDLE:
 			try {
 				if (ev instanceof AlarmEvent){
-					sendMessage(((MessageEvent)ev));
+					sendMessageToServer(((MessageEvent)ev));
 					this.currentState = State.ALARM;
 					l3.switchOn();
-					System.out.println("ALARM");
+					System.out.println("DEBUG: alarm start");
 				} else if (ev instanceof InformationEvent){
-					sendMessage(((MessageEvent)ev));
+					sendMessageToServer(((MessageEvent)ev));
 				}
 			} catch (Exception ex){
 				ex.printStackTrace();
@@ -55,12 +47,12 @@ public class EventTracker extends BasicEventLoopController {
 		case ALARM:
 			try {
 				if (ev instanceof InformationEvent){
-					sendMessage(((MessageEvent)ev));
+					sendMessageToServer(((MessageEvent)ev));
 				} else if (ev instanceof ButtonPressed){
 					currentState = State.IDLE;
 					serial.sendMsg("s");
 					l3.switchOff();
-					System.out.println("STOP ALARM");
+					System.out.println("DEBUG: alarm end");
 				}
 			} catch (Exception ex){
 				ex.printStackTrace();
@@ -69,7 +61,7 @@ public class EventTracker extends BasicEventLoopController {
 		}
 	}
 	
-	private void sendMessage(MessageEvent msgEv) {
+	private void sendMessageToServer(MessageEvent msgEv) {
 		ArduinoMessage msg = msgEv.getMessage();
 		this.server.post(msg);
 	}
@@ -80,7 +72,6 @@ public class EventTracker extends BasicEventLoopController {
 		try {
 			l1.switchOn();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

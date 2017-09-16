@@ -1,15 +1,10 @@
 package com.fusaimoe.event_tracker;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-
+/**
+ * 
+ * Simple implementation of Serial that uses the raspberry's usb serial
+ *
+ */
 public class SerialImpl implements com.fusaimoe.event_tracker.devices.Serial {
 
 	private boolean isMsgAvailable;
@@ -78,7 +73,6 @@ public class SerialImpl implements com.fusaimoe.event_tracker.devices.Serial {
 						msg = serial.receiveMsg();
 						setMsg(msg);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

@@ -1,7 +1,5 @@
 package com.fusaimoe.event_tracker;
 
-import java.io.IOException;
-
 import com.fusaimoe.event_tracker.devices.*;
 public class Main extends Thread {
 	

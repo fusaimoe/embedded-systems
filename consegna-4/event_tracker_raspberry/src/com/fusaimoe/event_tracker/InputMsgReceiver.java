@@ -4,7 +4,6 @@ import java.util.Calendar;
 
 import com.fusaimoe.event_tracker.common.*;
 import com.fusaimoe.event_tracker.devices.*;
-import com.google.gson.Gson;
 
 public class InputMsgReceiver extends BasicController {
 
@@ -23,12 +22,16 @@ public class InputMsgReceiver extends BasicController {
 			try {
 				String msg = serialDevice.waitForMsg();
 				BlinkerManager.getInstance().startBlinking();
-				System.out.println("MESSAGE: " + msg);
+				//System.out.println("MESSAGE: " + msg);
+				
 				try {
+					
 					ArduinoMessage am = new ArduinoMessageBuilder().setTime(cal.getTime().toString()).setTemperature(Float.parseFloat(msg)).build();
 					eventTracker.notifyEvent(new InformationEvent(am));
+					
 				} catch (NumberFormatException e) {
-					System.out.println("exception, message: " + msg);
+					
+					//System.out.println("exception, message: " + msg);
 					if(msg.contains("p")) {
 						System.out.println("presence");
 						ArduinoMessage am = new ArduinoMessageBuilder().setTime(cal.getTime().toString()).setPresence(true).build();
@@ -37,16 +40,12 @@ public class InputMsgReceiver extends BasicController {
 						ArduinoMessage am = new ArduinoMessageBuilder().setTime(cal.getTime().toString()).setAlarm(true).build();
 						eventTracker.notifyEvent(new AlarmEvent(am));
 					}
+					
 				}
 			} catch (Exception ex){
 				ex.printStackTrace();
 			}
 		}
-	}
-	
-	private void setupDate(ArduinoMessage message) {
-		Calendar cal = Calendar.getInstance();
-		message.setTime(cal.getTime().toString());
 	}
 
 }
