@@ -13,10 +13,26 @@ function printData(request){
 
 $(document).ready(function () {
   printData("");
+  $("td[data-content-text='id']").hide();
+  $("td[data-content-text='presence']").hide();
+  $("td[data-content-text='alarm']").hide();
 });
 
 $('.mdl-layout__tab').click(function () {
   $(".mdl-layout__tab").removeClass("is-active");
   $(this).addClass("is-active");
   printData( $(this).data("request") );
+
+  var id = $(this).attr("id");
+  if(id == "temperature"){
+    $("td[data-content-text='presence']").hide();
+    $("td[data-content-text='alarm']").hide();
+  }else if(id=="presence"){
+    $("td[data-content-text='temperature']").hide();
+    $("td[data-content-text='alarm']").hide();
+  }else {
+    $("td[data-content-text='temperature']").hide();
+    $("td[data-content-text='alarm']").hide();
+  }
+
 });
