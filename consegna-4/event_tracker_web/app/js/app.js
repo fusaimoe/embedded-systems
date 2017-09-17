@@ -1,5 +1,5 @@
 
-function printData(request){
+function printData(request, id){
   var tableBody = $('#table-body');
   var url = 'http://192.168.1.72:3000/messages';
 
@@ -7,32 +7,33 @@ function printData(request){
 
   $.getJSON(url + request, function (data) {
     console.log(data);
-    $("#table-body").loadTemplate("rowTemplate.html", data);
+    $("#table-body").loadTemplate("rowTemplate.html", data,{ success: function(){
+      $(".td-id").hide();
+      if(id == "temperature"){
+        $(".td-presence").hide();
+        $(".td-temperature").show();
+        $(".td-alarm").hide();
+      }else if(id=="presence"){
+        $(".td-alarm").hide();
+        $(".td-presence").show();
+        $(".td-temperature").hide();
+      }else {
+        $(".td-presence").hide();
+        $(".td-alarm").show();
+        $(".td-temperature").hide();
+      }
+    }});
+
   });
+
 }
 
 $(document).ready(function () {
-  printData("");
-  $("td[data-content-text='id']").hide();
-  $("td[data-content-text='presence']").hide();
-  $("td[data-content-text='alarm']").hide();
+  printData("", "temperature");
 });
 
 $('.mdl-layout__tab').click(function () {
   $(".mdl-layout__tab").removeClass("is-active");
   $(this).addClass("is-active");
-  printData( $(this).data("request") );
-
-  var id = $(this).attr("id");
-  if(id == "temperature"){
-    $("td[data-content-text='presence']").hide();
-    $("td[data-content-text='alarm']").hide();
-  }else if(id=="presence"){
-    $("td[data-content-text='temperature']").hide();
-    $("td[data-content-text='alarm']").hide();
-  }else {
-    $("td[data-content-text='temperature']").hide();
-    $("td[data-content-text='alarm']").hide();
-  }
-
+  printData( $(this).data("request"), $(this).attr("id") );
 });

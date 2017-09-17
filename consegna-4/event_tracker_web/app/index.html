@@ -36,9 +36,9 @@
         <div class="mdl-layout--large-screen-only mdl-layout__header-row">
         </div>
         <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark">
-          <a id="temperature" data-request="" class="mdl-layout__tab is-active">Overview</a>
-          <a id="presence" data-request="?presence=true" class="mdl-layout__tab">Presence Detected</a>
-          <a id="alarm" data-request="?alarm=true"  class="mdl-layout__tab">Alarm Deployed</a>
+          <a id="temperature" data-request="" class="mdl-layout__tab is-active">Temperature</a>
+          <a id="presence" data-request="?presence=true" class="mdl-layout__tab">Presence</a>
+          <a id="alarm" data-request="?alarm=true"  class="mdl-layout__tab">Alarm</a>
         </div>
       </header>
       <main class="mdl-layout__content">
@@ -49,10 +49,10 @@
               <table class="mdl-data-table mdl-js-data-table">
                 <thead>
                   <tr>
-                    <th class="mdl-data-table__cell--non-numeric">Time</th>
-                    <th>Temperature</th>
-                    <th class="mdl-data-table__cell--non-numeric">Presence</th>
-                    <th class="mdl-data-table__cell--non-numeric">Alarm</th>
+                    <th class="mdl-data-table__cell--non-numeric td-time">Time</th>
+                    <th class="mdl-data-table__cell--non-numeric td-temperature">Temperature</th>
+                    <th class="mdl-data-table__cell--non-numeric td-presence">Presence</th>
+                    <th class="mdl-data-table__cell--non-numeric td-alarm">Alarm</th>
                   </tr>
                 </thead>
                 <tbody id="table-body">
