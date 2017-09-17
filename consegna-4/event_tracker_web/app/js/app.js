@@ -29,7 +29,7 @@ function printData(request, id){
 }
 
 $(document).ready(function () {
-  printData("", "temperature");
+  printData("?presence=false&alarm=false", "temperature");
 });
 
 $('.mdl-layout__tab').click(function () {

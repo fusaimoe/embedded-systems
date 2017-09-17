@@ -26,18 +26,33 @@ public class InputMsgReceiver extends BasicController {
 				
 				try {
 					
-					ArduinoMessage am = new ArduinoMessageBuilder().setTime(cal.getTime().toString()).setTemperature(Float.parseFloat(msg)).build();
+					ArduinoMessage am = new ArduinoMessageBuilder()
+							.setTime(cal.getTime().toString())
+							.setTemperature(Float.parseFloat(msg))
+							.build();
+					
 					eventTracker.notifyEvent(new InformationEvent(am));
 					
 				} catch (NumberFormatException e) {
 					
 					//System.out.println("exception, message: " + msg);
 					if(msg.contains("p")) {
+						
 						System.out.println("presence");
-						ArduinoMessage am = new ArduinoMessageBuilder().setTime(cal.getTime().toString()).setPresence(true).build();
+						
+						ArduinoMessage am = new ArduinoMessageBuilder()
+								.setTime(cal.getTime().toString())
+								.setPresence(true)
+								.build();
+						
 						eventTracker.notifyEvent(new InformationEvent(am));
 					} else if(msg.contains("a")) {
-						ArduinoMessage am = new ArduinoMessageBuilder().setTime(cal.getTime().toString()).setAlarm(true).build();
+						
+						ArduinoMessage am = new ArduinoMessageBuilder()
+								.setTime(cal.getTime().toString())
+								.setAlarm(true)
+								.build();
+						
 						eventTracker.notifyEvent(new AlarmEvent(am));
 					}
 					
