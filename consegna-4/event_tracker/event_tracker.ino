@@ -26,12 +26,12 @@ Led* act;
 
 void setup() {
   raspbi = MyHardwareSerial::getIstance(new StandardComunicationProtocol());
-  android = new HC06(RX, TX);
+  android = new HC06(RX_PIN, TX_PIN);
   RaspberryEventsManager::inizialize(raspbi);
   AndroidEventsManager::inizialize(android);
-  tmp = new DHT11(DHT11);
-  p = new Pir(PIR);
-  act = new Led(LED);
+  tmp = new DHT11(DHT11_PIN);
+  p = new Pir(PIR_PIN);
+  act = new Led(LED_PIN);
   addEventHandler(EventType::TIMER_EVENT, timerEventHandler);
   addEventHandler(EventType::ALARM_EVENT, alarmEventHandler);
   addEventHandler(EventType::STOP_ALARM_EVENT, stopAlarmEventHandler);

@@ -11,11 +11,8 @@ void notifyPir() {
 }
 
 void registerNewPir(int pin, Pir* pir){
-  switch (pin){
-    case PIR: interPir = pir;
-            attachInterrupt(1, notifyPir, RISING);
-            break;
-  }
+  interPir = pir;
+  attachInterrupt(digitalPinToInterrupt(PIR_PIN), notifyPir, RISING);
 }
 
 Pir::Pir(int pin) : Component::Component(new int[1]{pin}, ComponentTypes::PIR) {
