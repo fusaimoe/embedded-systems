@@ -5,19 +5,17 @@ Led::Led(int pin) : Component(new int[1]{pin}, ComponentTypes::LED) {
   pinMode(pin,OUTPUT);
 }
 
-
-void Led::switchOn(){
+void Led::switchOn() {
 	this->state = HIGH;
   digitalWrite(this->getPin()[0],HIGH);
 }
 
-void Led::switchOff(){
+void Led::switchOff() {
 	this->state = LOW;
   digitalWrite(this->getPin()[0],LOW);
 }
 
-int Led::switchState()
-{
+int Led::switchState() {
 	if (this->state == HIGH) {
 		this->switchOff();
 	}
@@ -27,7 +25,6 @@ int Led::switchState()
 	return this->state;
 }
 
-bool Led::isOn()
-{
+bool Led::isOn() {
 	return this->state;
 }

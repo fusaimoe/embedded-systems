@@ -6,22 +6,23 @@
 #include "event.h"
 
 class Pir : public Component, public MovementSensor {
-public:
-	Pir(int pin);
-	bool movement();
-};
+	public:
+		Pir(int pin);
+		bool movement();
+	};
 
 class PirEvent: public Event {
-public:
-  PirEvent(Pir* source) : Event(EventType::PIR_EVENT){
-    this->source = source;
-  }
+	public:
+	  PirEvent(Pir* source) : Event(EventType::PIR_EVENT){
+	    this->source = source;
+	  }
 
-  Pir* getSource(){
-    return source;
-  }
-private:
-  Pir* source;
+	  Pir* getSource(){
+	    return source;
+	  }
+
+	private:
+	  Pir* source;
 };
 
 #endif

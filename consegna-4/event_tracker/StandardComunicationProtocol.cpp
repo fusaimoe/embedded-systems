@@ -2,12 +2,10 @@
 #include "Arduino.h"
 
 
-StandardComunicationProtocol::StandardComunicationProtocol()
-{
+StandardComunicationProtocol::StandardComunicationProtocol() {
 }
 
-SendableMessage StandardComunicationProtocol::getEncodedMessage(String msg)
-{
+SendableMessage StandardComunicationProtocol::getEncodedMessage(String msg) {
 	int lenght = msg.length();
   byte output[lenght+2];
 
@@ -17,8 +15,7 @@ SendableMessage StandardComunicationProtocol::getEncodedMessage(String msg)
 	return SendableMessage(output, lenght+2);
 }
 
-Msg * StandardComunicationProtocol::receiveDecodedMessage(SerialComunicationChannel * serialChannel)
-{
+Msg * StandardComunicationProtocol::receiveDecodedMessage(SerialComunicationChannel * serialChannel) {
   if (serialChannel->isMsgAvailable()) {
     String content = "";
     char contentR;

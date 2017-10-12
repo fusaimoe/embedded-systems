@@ -2,92 +2,96 @@
 #include "Arduino.h"
 
 #define MAX_HANDLERS 50
-#define MAX_EVQUEUE_SIZE 20 
+#define MAX_EVQUEUE_SIZE 20
 
-class EventQueue {  
-    
+class EventQueue {
+
 public:
   EventQueue(){
-    head = tail = 0; 
+    head = tail = 0;
   }
+
   bool isEmpty() {
-    return head == tail; 
+    return head == tail;
   }
-  void enqueue(Event* ev){
+
+  void enqueue(Event* ev) {
     queue[tail] = ev;
     tail = (tail+1) % MAX_EVQUEUE_SIZE;
   }
-  Event* dequeue(){
+
+  Event* dequeue() {
     if (isEmpty()){
       return 0;
     } else {
       Event* pev = queue[head];
       head = (head+1) % MAX_EVQUEUE_SIZE;
-      return pev; 
+      return pev;
     }
   }
 
 private:
   Event* queue[MAX_EVQUEUE_SIZE];
-  int head, tail; 
+  int head, tail;
 };
 
 class EventHandler {
-public:
-  EventHandler(EventType type, void (*proc)(Event* ev));
-  bool isTriggered(Event* ev);
-  bool exec(Event* ev);
-private:
-  EventType type;
-  void (*proc)(Event* ev);
+  public:
+    EventHandler(EventType type, void (*proc)(Event* ev));
+    bool isTriggered(Event* ev);
+    bool exec(Event* ev);
+
+  private:
+    EventType type;
+    void (*proc)(Event* ev);
 };
 
 class EventHandlerManager {
 
   public:
-  static EventHandlerManager* getInstance();  
-  bool addEventHandler(EventType event, void (*proc)(Event* ev));  
-  void dispatchEvent(Event* ev);
-  void mainEventLoop();  
+    static EventHandlerManager* getInstance();
+    bool addEventHandler(EventType event, void (*proc)(Event* ev));
+    void dispatchEvent(Event* ev);
+    void mainEventLoop();
 
-private:
-  EventHandlerManager();    
-  EventQueue eventQueue;
-  int nEventHandlers;
-  EventHandler* eventHandlers[MAX_HANDLERS];
-  
+  private:
+    EventHandlerManager();
+    EventQueue eventQueue;
+    int nEventHandlers;
+    EventHandler* eventHandlers[MAX_HANDLERS];
+
   /* singleton */
   static EventHandlerManager* instance;
-  
+
 };
 
 /* ------------------------ Event  ------------------------ */
 
-Event::Event(EventType type){
+Event::Event(EventType type) {
   this->type = type;
-} 
-  
-EventType Event::getType(){
-  return type;  
 }
-  
-  
+
+EventType Event::getType(){
+  return type;
+}
+
+
 /* ------------------------ Event Handlers  ------------------------ */
 
-EventHandler::EventHandler(EventType type, void (*proc)(Event* ev)){
+EventHandler::EventHandler(EventType type, void (*proc)(Event* ev)) {
   this->type = type;
   this->proc = proc;
 }
-  
-bool EventHandler::isTriggered(Event* ev){
+
+bool EventHandler::isTriggered(Event* ev) {
   if (ev->getType() == this->type){
     return true;
   } else {
-    return false; 
+    return false;
   }
 }
-  
-bool EventHandler::exec(Event* ev){
+
+bool EventHandler::exec(Event* ev) {
   (*proc)(ev);
 }
 
@@ -100,77 +104,54 @@ EventHandlerManager* EventHandlerManager::getInstance(){
 }
 
 EventHandlerManager::EventHandlerManager(){
-  nEventHandlers = 0;  
+  nEventHandlers = 0;
 }
-  
-bool EventHandlerManager::addEventHandler(EventType event, void (*proc)(Event* ev)){
+
+bool EventHandlerManager::addEventHandler(EventType event, void (*proc)(Event* ev)) {
   if (nEventHandlers < MAX_HANDLERS){
     eventHandlers[nEventHandlers] = new EventHandler(event, proc);
     nEventHandlers++;
     return true;
   } else {
-    return false;  
+    return false;
   }
 }
-  
-void EventHandlerManager::dispatchEvent(Event* ev){
+
+void EventHandlerManager::dispatchEvent(Event* ev) {
   eventQueue.enqueue(ev);
 }
 
-void EventHandlerManager::mainEventLoop(){
-    bool isEmpty = true;
+void EventHandlerManager::mainEventLoop() {
+  bool isEmpty = true;
+  cli();
+  isEmpty = eventQueue.isEmpty();
+  sei();
+
+  if(!isEmpty) {
     cli();
-    isEmpty = eventQueue.isEmpty();
+    Event* ev = eventQueue.dequeue();
     sei();
-    if(!isEmpty) {
-      cli();
-      Event* ev = eventQueue.dequeue();
-      sei();
-  
-      // dispatch event 
-      for (int i = 0; i < nEventHandlers; i++){
-        if (eventHandlers[i]->isTriggered(ev)){
-          eventHandlers[i]->exec(ev);
-        }
-      }    
-      
-      delete ev;
+
+    // dispatch event
+    for (int i = 0; i < nEventHandlers; i++){
+      if (eventHandlers[i]->isTriggered(ev)){
+        eventHandlers[i]->exec(ev);
+      }
     }
-   /*while (1){
-    bool isEmpty = true;
-    cli();
-    isEmpty = eventQueue.isEmpty();
-    sei();
-    if(!isEmpty) {
-      cli();
-      Event* ev = eventQueue.dequeue();
-      sei();
-  
-      // dispatch event 
-      for (int i = 0; i < nEventHandlers; i++){
-        if (eventHandlers[i]->isTriggered(ev)){
-          eventHandlers[i]->exec(ev);
-        }
-      }    
-      
-      delete ev;
-    }
-  }*/
+    delete ev;
+  }
 }
 
 /* ------------------------ Global  ------------------------ */
 
-bool addEventHandler(EventType event, void (*proc)(Event* ev)){
+bool addEventHandler(EventType event, void (*proc)(Event* ev)) {
   return EventHandlerManager::getInstance()->addEventHandler(event, proc);
-}  
+}
 
-void dispatchEvent(Event* ev){
+void dispatchEvent(Event* ev) {
   return EventHandlerManager::getInstance()->dispatchEvent(ev);
 }
 
-void mainEventLoop(){
+void mainEventLoop() {
   EventHandlerManager::getInstance()->mainEventLoop();
 }
-
-
-

@@ -1,6 +1,8 @@
 #include "Pir.h"
 #include "Arduino.h"
 
+#include "config.h"
+
 Pir* interPir;
 
 void notifyPir() {
@@ -10,19 +12,17 @@ void notifyPir() {
 
 void registerNewPir(int pin, Pir* pir){
   switch (pin){
-    case 3: interPir = pir;
-            attachInterrupt(1, notifyPir, RISING); 
+    case PIR: interPir = pir;
+            attachInterrupt(1, notifyPir, RISING);
             break;
-  } 
+  }
 }
 
-Pir::Pir(int pin) : Component::Component(new int[1]{pin}, ComponentTypes::PIR)
-{
+Pir::Pir(int pin) : Component::Component(new int[1]{pin}, ComponentTypes::PIR) {
 	pinMode(pin, INPUT);
   registerNewPir(pin, this);
 }
 
-boolean Pir::movement()
-{
+boolean Pir::movement() {
 	return digitalRead(this->getPin()[0]);
 }

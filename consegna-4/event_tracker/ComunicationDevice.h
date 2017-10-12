@@ -4,8 +4,7 @@
 #include "OutputDevice.h"
 #include "event.h"
 
-class ComunicationDevice : virtual public InputDevice, virtual public OutputDevice
-{
+class ComunicationDevice : virtual public InputDevice, virtual public OutputDevice {
 };
 
 #endif

@@ -2,29 +2,30 @@
 #include "event.h"
 
 class AlarmE: public Event {
-public:
-  AlarmE(InputDevice* source) : Event(EventType::ALARM_EVENT){
-    this->source = source;
-  }
+  public:
+    AlarmE(InputDevice* source) : Event(EventType::ALARM_EVENT){
+      this->source = source;
+    }
+    InputDevice* getSource(){
+      return source;
+    }
 
-  InputDevice* getSource(){
-    return source;
-  }
-private:
-  InputDevice* source;
-};
+  private:
+    InputDevice* source;
+  };
 
 class PresenceE: public Event {
-public:
-  PresenceE(InputDevice* source) : Event(EventType::PRESENCE_EVENT){
-    this->source = source;
-  }
+  public:
+    PresenceE(InputDevice* source) : Event(EventType::PRESENCE_EVENT){
+      this->source = source;
+    }
 
-  InputDevice* getSource(){
-    return source;
-  }
-private:
-  InputDevice* source;
+    InputDevice* getSource(){
+      return source;
+    }
+
+  private:
+    InputDevice* source;
 };
 
 AndroidEventsManager* AndroidEventsManager::instance = NULL;
@@ -39,17 +40,14 @@ AndroidEventsManager* AndroidEventsManager::getInstance() {
   return AndroidEventsManager::instance;
 }
 
-AndroidEventsManager::AndroidEventsManager(InputDevice* android)
-{
+AndroidEventsManager::AndroidEventsManager(InputDevice* android) {
   this->android = android;
 }
 
-void AndroidEventsManager::checkEvents()
-{
+void AndroidEventsManager::checkEvents() {
   if(android->isMsgAvailable()) {
     InputMessages ms = android->getMessage()->convertToStandardMsg();
-    switch (ms)
-    {
+    switch (ms){
       case InputMessages::ALARM:
         dispatchEvent(new AlarmE(android));
         break;

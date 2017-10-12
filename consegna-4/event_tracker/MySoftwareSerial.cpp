@@ -1,26 +1,22 @@
 #include "MySoftwareSerial.h"
 #include "Arduino.h"
 #include "event.h"
- 
-MySoftwareSerial::MySoftwareSerial(ComunicationProtocol* protocol, int rxpin, int txpin)
-{
+
+MySoftwareSerial::MySoftwareSerial(ComunicationProtocol* protocol, int rxpin, int txpin) {
 	this->ss = new SoftwareSerial(rxpin, txpin);
   this->ss->begin(9600);
 	this->protocol = protocol;
 }
 
-bool MySoftwareSerial::isMsgAvailable()
-{
+bool MySoftwareSerial::isMsgAvailable() {
 	return ss->available();
 }
 
-Msg * MySoftwareSerial::receiveMsg()
-{
+Msg * MySoftwareSerial::receiveMsg() {
 	return this->protocol->receiveDecodedMessage(this);
 }
 
-bool MySoftwareSerial::sendMsg(Msg msg)
-{
+bool MySoftwareSerial::sendMsg(Msg msg) {
 	SendableMessage message = this->protocol->getEncodedMessage(msg.getContent());
 	if (message.getMessageLenght() > 0) {
 		this->write((const char*)message.getMessage(), message.getMessageLenght());
@@ -29,12 +25,10 @@ bool MySoftwareSerial::sendMsg(Msg msg)
 	return false;
 }
 
-int MySoftwareSerial::read()
-{
+int MySoftwareSerial::read() {
 	return ss->read();
 }
 
-void MySoftwareSerial::write(const char * message, int lenght)
-{
+void MySoftwareSerial::write(const char * message, int lenght) {
 	ss->write(message, lenght);
 }

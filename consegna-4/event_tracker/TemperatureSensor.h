@@ -2,8 +2,8 @@
 #define __TEMPERATURESENSOR__
 
 class TemperatureSensor {
-public:
-	virtual float getTemperature() = 0;
-};
+	public:
+		virtual float getTemperature() = 0;
+	};
 
 #endif

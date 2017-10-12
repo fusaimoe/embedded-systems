@@ -5,12 +5,11 @@
 per verificarlo*/
 
 class Light {
-public:
-  virtual void switchOn() = 0;
-  virtual void switchOff() = 0;
-  virtual int switchState() = 0;
-  virtual bool isOn() = 0;
-};
+  public:
+    virtual void switchOn() = 0;
+    virtual void switchOff() = 0;
+    virtual int switchState() = 0;
+    virtual bool isOn() = 0;
+  };
 
 #endif
-

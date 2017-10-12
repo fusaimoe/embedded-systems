@@ -5,20 +5,17 @@
  * il protocollo di comunicazione modellato è identico a quello proposto a lezione.
  */
 
-HC06ComunicationProtocol::HC06ComunicationProtocol(int maxMessageSize)
-{
+HC06ComunicationProtocol::HC06ComunicationProtocol(int maxMessageSize) {
 	this->maxMessageSize = maxMessageSize;
 }
 
-
-SendableMessage HC06ComunicationProtocol::getEncodedMessage(String msg)
-{
+SendableMessage HC06ComunicationProtocol::getEncodedMessage(String msg) {
 	int len = msg.length();
 	if (len >= 0 && len <= this->maxMessageSize) {
-    byte output[len+2];//TODO forse +2
+    byte output[len+2];
 		output[0] = (byte)len;
 		msg.getBytes((output + 1), len + 2);
-    //Serial.println("finished");
+
 		return SendableMessage(output, len + 2);
 	}
 	else {
@@ -26,12 +23,11 @@ SendableMessage HC06ComunicationProtocol::getEncodedMessage(String msg)
 	}
 }
 
-Msg * HC06ComunicationProtocol::receiveDecodedMessage(SerialComunicationChannel * serialChannel)
-{
+Msg * HC06ComunicationProtocol::receiveDecodedMessage(SerialComunicationChannel * serialChannel) {
 	if (serialChannel->isMsgAvailable()) {
 		String content = "";
 		int size = serialChannel->read();
-		// Serial.println("> "+String(size));
+
 		int nDataRec = 0;
 		while (nDataRec < size) {
 			if (serialChannel->isMsgAvailable()) {

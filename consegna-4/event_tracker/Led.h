@@ -3,16 +3,16 @@
 
 #include "Light.h"
 #include "Component.h"
-//implementa le funzionalità richieste dall'interfaccia light
-class Led: public Light, public Component { 
-public:
-  Led(int pin);
-  void switchOn();
-  void switchOff();
-  int switchState();
-  bool isOn();
-private:
-  int state;
-};
+//implementa le funzionalitï¿½ richieste dall'interfaccia light
+class Led: public Light, public Component {
+  public:
+    Led(int pin);
+    void switchOn();
+    void switchOff();
+    int switchState();
+    bool isOn();
+  private:
+    int state;
+  };
 
 #endif

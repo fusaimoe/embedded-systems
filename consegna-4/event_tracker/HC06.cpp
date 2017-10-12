@@ -6,34 +6,27 @@
 
 #include "./StandardComunicationProtocol.h"
 
-HC06::HC06(int rxPin, int txPin) : Component(new int[2]{ rxPin, txPin }, ComponentTypes::HC06)
-{
+HC06::HC06(int rxPin, int txPin) : Component(new int[2]{ rxPin, txPin }, ComponentTypes::HC06) {
 	ComunicationProtocol* protocol = new HC06ComunicationProtocol(255);
 	if (rxPin == 0 && txPin == 1) {
 		this->channel = MyHardwareSerial::getIstance(protocol);
-		//this->channel = new TestSerial();
 	}
 	else {
 		this->channel = new MySoftwareSerial(protocol, rxPin, txPin);
 	}
 	while (!Serial) {}
-	//Serial.println("Ready to Go");
 }
 
-bool HC06::isMsgAvailable()
-{
+bool HC06::isMsgAvailable() {
 	return this->channel->isMsgAvailable();
 }
 
-InputMsg* HC06::getMessage()
-{
+InputMsg* HC06::getMessage() {
 	return new InputMsg(this->channel->receiveMsg());
 }
 
-void HC06::sendMessage(OutputMessages message)
-{
-	switch (message)
-	{
+void HC06::sendMessage(OutputMessages message) {
+	switch (message) {
 	case OutputMessages::PRESENCE:
 		this->channel->sendMsg(Msg("presence"));
 		break;

@@ -5,12 +5,11 @@
 
 
 class HC06ComunicationProtocol : virtual public ComunicationProtocol{
-public:
-	HC06ComunicationProtocol(int maxMessageSize);
-	SendableMessage getEncodedMessage(String msg);
-	Msg* receiveDecodedMessage(SerialComunicationChannel* serialChannel);
-private:
-	int maxMessageSize;
-};
-
+	public:
+		HC06ComunicationProtocol(int maxMessageSize);
+		SendableMessage getEncodedMessage(String msg);
+		Msg* receiveDecodedMessage(SerialComunicationChannel* serialChannel);
+	private:
+		int maxMessageSize;
+	};
 #endif
