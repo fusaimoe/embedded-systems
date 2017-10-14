@@ -1,7 +1,7 @@
-/*#ifndef __SERVOIMPL__
+#ifndef __SERVOIMPL__
 #define __SERVOIMPL__
 
-#include <Servo.h>
+#include <ServoTimer2.h>
 
 class ServoImpl {
 
@@ -10,7 +10,7 @@ public:
   void setValue(int value);
 
 private:
-    Servo myservo;
+    ServoTimer2 myservo;
 };
 
-#endif*/
+#endif

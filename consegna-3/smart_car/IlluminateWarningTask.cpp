@@ -31,6 +31,7 @@ void IlluminateWarningTask::tick() {
       if (counter >= 8) { //8 corresponds to 2 seconds
         led->switchOff();
         counter = 0;
+        shared->setContact(false);
         state = OFF;
       }
       break;

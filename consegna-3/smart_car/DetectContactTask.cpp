@@ -22,6 +22,7 @@ void DetectContactTask::tick() {
       }
       break;
     case ON:
+      shared->setContact(true);
       display->showMsg("contactOn");
       state = IDLE;
       break;

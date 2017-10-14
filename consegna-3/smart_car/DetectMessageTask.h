@@ -11,7 +11,7 @@ class DetectMessageTask: public Task {
 
     SharedContext* shared;
     MsgService* msgService;
-    const String prefix = "Slider: ";
+    const String prefix = "Slider:";
     
   public:
 

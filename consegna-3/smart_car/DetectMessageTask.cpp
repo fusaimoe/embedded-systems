@@ -27,9 +27,9 @@ void DetectMessageTask::tick() {
        shared->setMoving(true);
     } else if(msg == "notMoving"){
        shared->setMoving(false);
-    } else if(msg.indexOf(prefix)>0){
-       String removedPrefix = msg.substring(prefix.length(), msg.length());
-       shared->setAttack(removedPrefix.toInt());
+    } else {
+       
+       shared->setAttack(msg.toInt());
     }
     delete message;
   }

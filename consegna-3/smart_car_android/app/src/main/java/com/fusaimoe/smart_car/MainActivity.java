@@ -453,7 +453,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     try {
-                        BluetoothConnectionManager.getInstance().sendMsg(C.SLIDER_PREFIX + Integer.toString(progress));
+                        BluetoothConnectionManager.getInstance().sendMsg(/*C.SLIDER_PREFIX +*/ Integer.toString(progress));
                     } catch (MsgTooBigException e) {
                         e.printStackTrace();
                     }
