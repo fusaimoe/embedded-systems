@@ -63,7 +63,7 @@ void setup(){
   Task* t5 = new IlluminateLampTask(L1);
   t5->init(124);
   sched.addTask(t5);
-  
+
   Task* t6 = new FlushWCTask(L2);
   t6->init(124);
   sched.addTask(t6);
@@ -80,5 +80,5 @@ void setup(){
 
 
 void loop(){
-  MsgService.sendMsg("SI PREGA DI USCIRE, TOILETTE IN FASE DI AUTO-PULIZIA");
+  sched.schedule();
 };
